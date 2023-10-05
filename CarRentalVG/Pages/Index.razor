@@ -1,0 +1,86 @@
+﻿@page "/"
+@using CarRentalVG.Business;
+@inject BookingManager bm;
+
+<PageTitle>Index</PageTitle>
+
+<h1>CarRental</h1>
+
+
+<table class="table table-striped table-hover table-bordered border-info border-rounded pt-4 w-75">
+    <thead>
+        <tr>
+            <th>RegNo</th>
+            <th>Make</th>
+            <th>Odometer</th>
+            <th>Cost Km</th>
+            <th>Vehicle Type</th>
+            <th>$ Day</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+@*         @foreach (var v in bm.GetVehicles())
+        {
+            <tr>
+                <td>@v.RegistrationNo</td>
+                <td>@v.Make</td>
+                <td>@v.Odometer</td>
+                <td>@v.CostPerKm</td>
+                <td>@v.VehicleType</td>
+                <td>@v.CostPerDay</td>
+                <td><span class="badge rounded-pill bg-@(v.RentedStatus.ToString() == "Available" ? "success" : "danger")">@v.RentedStatus</span></td>
+            </tr>
+        } *@
+    </tbody>
+</table>
+
+<table class="table table-striped table-hover table-bordered border-info border-rounded pt-4 w-75">
+    <thead>
+        <tr>
+            <th>RegNo</th>
+            <th>Customer</th>
+            <th>Km Rented</th>
+            <th>Km Returned</th>
+            <th>Rented</th>
+            <th>Returned</th>
+            <th>Cost</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody text="Bookings">
+@*         @foreach (var b in bm.GetBookings())
+        {
+            <tr>
+                <td>@b.RegistrationNo</td>
+                <td>@b.CustomerOut(b.Customer)</td>
+                <td>@b.KmRented</td>
+                <td>@(b.Status.ToString() == "Closed" ? b.KmReturned : "")</td>
+                <td>@b.Rented</td>
+                <td>@(b.Status.ToString() == "Closed" ? b.Returned : "")</td>
+                <td>@b.Cost</td>
+                <td><span class="badge rounded-pill bg-@(b.Status.ToString() == "Open" ? "success" : "black")">@b.Status</span></td>
+            </tr>
+        } *@
+    </tbody>
+</table>
+
+<table class="table table-striped table-hover table-bordered border-info border-rounded pt-4 w-75">
+    <thead>
+        <tr>
+            <th>CustomerID</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+        </tr>
+    </thead>
+    <tbody>
+@*         @foreach (var p in bm.GetCustomers())
+        {
+            <tr>
+                <td>@p.SSN</td>
+                <td>@p.LastName</td>
+                <td>@p.FirstName</td>
+            </tr>
+        } *@
+    </tbody>
+</table>
