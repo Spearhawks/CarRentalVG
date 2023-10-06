@@ -6,29 +6,40 @@
 
 <h1>CarRental</h1>
 
-<table class="table mt-5 w-75">
-    <thead>
-        <tr class="table-info">
-            <th>RegNo</th>
-            <th>Customer</th>
-            <th>Km Rented</th>
-            <th>Km Returned</th>
-            <th>Rented</th>
-            <th>Returned</th>
-            <th>Cost</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody text="Bookings">
+<div class="mt-5"><h3>Vehicles</h3></div>
+
+<div class="d-flex p-2">
+    <table class="table w-75">
+        <thead class="table-info">
+            <tr>
+                <th>RegNo</th>
+                <th>Make</th>
+                <th>Odometer</th>
+                <th>Cost Km</th>
+                <th>Vehicle Type</th>
+                <th>$ Day</th>
+                <th>Action</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+    <tbody text="Vehicles">
         <tr>
             <td><input type="text" size="10" /></td>
             <td><input type="text" size="10" /></td>
             <td><input type="text" size="10" /></td>
             <td><input type="text" size="10" /></td>
-            <td><input type="text" size="10" /></td>
-            <td><input type="text" size="10" /></td>
-            <td><input type="text" size="10" /></td>
-            <td><input type="text" size="10" /></td>
+            <td>
+                <select class="form-select-sm">
+                    <option value=""></option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="Combi">Combi</option>
+                    <option value="Van">Van</option>
+                    <option value="Motorcycle">Motorcycle</option>
+                </select>
+            </td>
+            <td></td>
+            <td><button>Add</button></td>
+            <td></td> 
         </tr>
         @*         
         @foreach (var b in bm.GetBookings())
@@ -51,8 +62,15 @@
             <td>D</td>
             <td>E</td>
             <td>F</td>
-            <td>G</td>
-            <td>H</td>
+            <td>
+                <select class="form-select-sm">
+                    <option value=""></option>
+                    <option value="Kalle">Kalle</option>
+                    <option value="Nina">Nina</option>
+                </select>
+                <button>Return</button>
+            </td>
+            <td><span class="badge rounded-pill bg-danger ">Booked</span></td> @* @(b.Status.ToString() == "Open" ? "success" : "black") *@
         </tr>
         <tr>
             <td>A</td>
@@ -61,25 +79,37 @@
             <td>D</td>
             <td>E</td>
             <td>F</td>
-            <td>G</td>
-            <td>H</td>
+            <td>
+                <select class="form-select-sm">
+                    <option value=""></option>
+                    <option value="Kalle">Kalle</option>
+                    <option value="Nina">Nina</option>
+                </select>
+                <button>Rent</button>
+            </td>
+            <td><span class="badge rounded-pill bg-success ">Available</span></td> @* @(b.Status.ToString() == "Open" ? "success" : "black") *@
         </tr>
     </tbody>
 </table>
+</div>
 
-    <table class="table mt-5 w-75">
-        <thead class="table-info">
-            <tr>
-                <th>RegNo</th>
-                <th>Make</th>
-                <th>Odometer</th>
-                <th>Cost Km</th>
-                <th>Vehicle Type</th>
-                <th>$ Day</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
+<div class="mt-5"><h3>Bookings</h3></div>
+
+<div class="d-flex p-2">
+<table class="table w-75">
+    <thead>
+        <tr class="table-info">
+            <th>RegNo</th>
+            <th>Customer</th>
+            <th>Km Rented</th>
+            <th>Km Returned</th>
+            <th>Rented</th>
+            <th>Returned</th>
+            <th>Cost</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
 
     @*         @foreach (var v in bm.GetVehicles())
             {
@@ -101,6 +131,7 @@
                 <td>E</td>
                 <td>F</td>
                 <td>G</td>
+            <td><span class="badge rounded-pill bg-danger">Closed</span></td> @* @(v.RentedStatus.ToString() == "Available" ? "success" : "danger") *@
             </tr>
             <tr>
                 <td>A</td>
@@ -110,38 +141,51 @@
                 <td>E</td>
                 <td>F</td>
                 <td>G</td>
+            <td><span class="badge rounded-pill bg-success">Open</span></td> @* @(v.RentedStatus.ToString() == "Available" ? "success" : "danger") *@
             </tr>
         </tbody>
     </table>
+</div>
 
+<div class="mt-5"><h3>Customers</h3></div>
 
-
-<table class="table mt-5 w-50">
-    <thead>
-        <tr class="table-info">
-            <th>CustomerID</th>
-            <th>Last Name</th>
-            <th>First Name</th>
-        </tr>
-    </thead>
-    <tbody>
-@*         @foreach (var p in bm.GetCustomers())
-        {
-            <tr>
-                <td>@p.SSN</td>
-                <td>@p.LastName</td>
-                <td>@p.FirstName</td>
+<div class="d-flex p-2">
+    <table class="table w-50">
+        <thead>
+            <tr class="table-info">
+                <th>CustomerID</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Action</th>
             </tr>
-        } *@
-        <tr>
-                <td>H</td>
-                <td>H</td>
-                <td>H</td>
-        </tr>
+        </thead>
+        <tbody>
+    @*         @foreach (var p in bm.GetCustomers())
+            {
+                <tr>
+                    <td>@p.SSN</td>
+                    <td>@p.LastName</td>
+                    <td>@p.FirstName</td>
+                </tr>
+            } *@
             <tr>
-                <td>H</td>
-                <td>H</td>
-                <td>H</td>
+
+                <td><input type="text" size="10" placeholder="SSN"/></td>
+                <td><input type="text" size="10" placeholder="Last Name" /></td>
+                <td><input type="text" size="10" placeholder="First Name" /></td>
+                <td><button>Add</button></td>
             </tr>
-    </tbody>
-</table>
+            <tr>
+                    <td>H</td>
+                    <td>H</td>
+                    <td>H</td>
+            </tr>
+                <tr>
+                    <td>H</td>
+                    <td>H</td>
+                    <td>H</td>
+                </tr>
+        </tbody>
+    </table>
+</div>
+

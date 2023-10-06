@@ -24,7 +24,7 @@ Interface:
 
 Datalagret:
     - Skapa generiska metoder i Data.
-    - Läsa in JSON-filer.
+    - Skapa och läs in JSON-filer.
     - Läs på om expresions och reflection-metoder.
     - Här ska metoder för att hyra och lämna tillbaka finnas.
 
