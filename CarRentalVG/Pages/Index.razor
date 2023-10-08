@@ -4,10 +4,9 @@
 
 <PageTitle>Index</PageTitle>
 
-@* Tabel for holding vehicle data and where the user can add vehicles and create/end bookings.*@
 <div class="mt-5"><h3>Vehicles</h3></div>
-<div class="d-flex p-2">
-    <table class="table table-sm w-75 border border-info table-bordered">
+<div class="d-flex p-2 table-responsive-sm">
+    <table class="table border border-info table-bordered">
         <thead class="table-info">
             <tr>
                 <th>RegNo</th>
@@ -24,7 +23,7 @@
         <tr>
             <td><input type="text" size="10" /></td>
             <td><input type="text" size="10" /></td>
-            <td><input type="text" size="10" /></td>
+            <td><input type="number" size="10" /></td>
             <td><input type="text" size="10" /></td>
             <td>
                 <select class="form-select-sm">
@@ -35,66 +34,50 @@
                     <option value="Motorcycle">Motorcycle</option>
                 </select>
             </td>
-            <td></td>
+                <td><input type="number" style="width: 40px;" /></td>
                 <td><button class ="btn btn-outline-success btn-sm">Add</button></td>
             <td></td> 
         </tr>
-        @*         
-        @foreach (var b in bm.GetBookings())
-        {
-        <tr>
-        <td>@b.RegistrationNo</td>
-        <td>@b.CustomerOut(b.Customer)</td>
-        <td>@b.KmRented</td>
-        <td>@(b.Status.ToString() == "Closed" ? b.KmReturned : "")</td>
-        <td>@b.Rented</td>
-        <td>@(b.Status.ToString() == "Closed" ? b.Returned : "")</td>
-        <td>@b.Cost</td>
-        <td><span class="badge rounded-pill bg-@(b.Status.ToString() == "Open" ? "success" : "black")">@b.Status</span></td>
-        </tr>
-        } *@
-        <tr>
-            <td>ABC123</td>
-            <td>Volvo</td>
-            <td>3233</td>
-            <td>1.3</td>
-            <td>Sedan</td>
-            <td>200</td>
-            <td>
-                <select class="form-select-sm">
-                    <option value=""></option>
-                    <option value="Kalle">Kalle</option>
-                    <option value="Nina">Nina</option>
-                </select>
+            @foreach (var v in bm.GetVehicles())
+            {
+            <tr>
+                <td>@v.RegistrationNo</td>
+                <td>@v.Make</td>
+                <td>@v.Odometer</td>
+                <td>@v.CostPerKm</td>
+                <td>@v.VehicleType</td>
+                <td>@v.CostPerDay</td>
+                @if(v.RentedStatus==Common.Enums.RentedStatus.Rented)
+                {
+                        
+                <td>
+                    <input type="number" @bind="bm._kmreturned" style="width: 40px;" />
                     <button class="btn btn-outline-success btn-sm">Return</button>
-            </td>
-            <td><span class="badge rounded-pill bg-danger ">Booked</span></td> @* @(b.Status.ToString() == "Open" ? "success" : "black") *@
-        </tr>
-        <tr>
-            <td>CBA321</td>
-            <td>Saab</td>
-            <td>2333</td>
-            <td>1.2</td>
-            <td>Combi</td>
-            <td>100</td>
-            <td>
-                <select class="form-select-sm">
+                </td>
+                }
+                else
+                {
+                <td>
+                    <select class="form-select-sm">
                     <option value=""></option>
-                    <option value="Kalle">Kalle</option>
-                    <option value="Nina">Nina</option>
-                </select>
+                    @foreach(var c in bm.GetCustomers())
+                    {
+                        <option value="FirstName">@c.FirstName</option>
+                    }
+                    </select>
                     <button class="btn btn-outline-danger btn-sm">Rent</button>
-            </td>
-                <td><span class="badge rounded-pill bg-success">Available</span></td> @* @(b.Status.ToString() == "Open" ? "success" : "black") *@
-        </tr>
+                </td>
+                }
+                <td><span class="badge rounded-pill bg-@(v.RentedStatus.ToString() == "Available" ? "success" : "danger")">@v.RentedStatus</span></td>
+            </tr>
+            }
     </tbody>
 </table>
 </div>
 
-@* Tabel holding booking data.*@
 <div class="mt-5"><h3>Bookings</h3></div>
-<div class="d-flex p-2">
-    <table class="table table-sm w-75 border border-info table-bordered">
+<div class="d-flex p-2 table-responsive-sm">
+    <table class="table border border-info table-bordered">
         <thead>
             <tr class="table-info">
                 <th>RegNo</th>
@@ -108,83 +91,52 @@
             </tr>
         </thead>
         <tbody>
-    @*         @foreach (var v in bm.GetVehicles())
+         @foreach (var b in bm.GetBookings())
             {
-                <tr>
-                    <td>@v.RegistrationNo</td>
-                    <td>@v.Make</td>
-                    <td>@v.Odometer</td>
-                    <td>@v.CostPerKm</td>
-                    <td>@v.VehicleType</td>
-                    <td>@v.CostPerDay</td>
-                    <td><span class="badge rounded-pill bg-@(v.RentedStatus.ToString() == "Available" ? "success" : "danger")">@v.RentedStatus</span></td>
-                </tr>
-            } *@
             <tr>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-                <td>E</td>
-                <td>F</td>
-                <td>G</td>
-            <td><span class="badge rounded-pill bg-danger">Closed</span></td> @* @(v.RentedStatus.ToString() == "Available" ? "success" : "danger") *@
+            <td>@b.RegistrationNo</td>
+            <td>@b.CustomerOut(b.Customer)</td>
+            <td>@b.KmRented</td>
+            <td>@(b.Status.ToString() == "Closed" ? b.KmReturned : "")</td>
+            <td>@b.Rented</td>
+            <td>@(b.Status.ToString() == "Closed" ? b.Returned : "")</td>
+            <td>@b.Cost</td>
+            <td><span class="badge rounded-pill bg-@(b.Status.ToString() == "Open" ? "success" : "black")">@b.Status</span></td>
             </tr>
-            <tr>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-                <td>E</td>
-                <td>F</td>
-                <td>G</td>
-            <td><span class="badge rounded-pill bg-success">Open</span></td> @* @(v.RentedStatus.ToString() == "Available" ? "success" : "danger") *@
-            </tr>
+            } 
         </tbody>
     </table>
 </div>
 
-@* Tabel for holding and adding customer data.*@
 <div class="mt-5"><h3>Customers</h3></div>
-<div class="d-flex p-2">
-    <table class="table table-sm w-50 border border-info table-bordered">
+<div class="d-flex p-2 table-responsive-sm">
+    <table class="table w-50 border border-info table-bordered">
         <thead>
             <tr class="table-info">
-                <th>CustomerID</th>
+                <th>SSN</th>
                 <th>Last Name</th>
                 <th>First Name</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-    @*         @foreach (var p in bm.GetCustomers())
+            <tr>
+                <td><input type="number" size="10" @bind="bm._ssn" placeholder="SSN" /></td>
+                <td><input type="text" size="10" @bind="bm._lastName" placeholder="Last Name" /></td>
+                <td><input type="text" size="10" @bind="bm._firstName" placeholder="First Name" /></td>
+                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers((int)bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
+            </tr>
+            @foreach (var p in bm.GetCustomers())
             {
                 <tr>
                     <td>@p.SSN</td>
                     <td>@p.LastName</td>
                     <td>@p.FirstName</td>
-                </tr>
-            } *@
-            <tr>
-
-                <td><input type="text" size="10" placeholder="SSN"/></td>
-                <td><input type="text" size="10" placeholder="Last Name" /></td>
-                <td><input type="text" size="10" placeholder="First Name" /></td>
-                <td><button class="btn btn-outline-success btn-sm">Add</button></td>
-            </tr>
-            <tr>
-                    <td>H</td>
-                    <td>H</td>
-                    <td>H</td>
                     <td><button class="btn btn-outline-danger btn-sm">Delete</button></td>
-            </tr>
-            <tr>
-                <td>H</td>
-                <td>H</td>
-                <td>H</td>
-                <td><button class="btn btn-outline-danger btn-sm">Delete</button></td>
-            </tr>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
+
 

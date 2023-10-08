@@ -1,8 +1,10 @@
-﻿.bg-color {
+﻿.bg-color 
+{
     background-color: deepskyblue;
 }
 
-.border-rounded {
+.border-rounded 
+{
     border-radius: 10px!important;
 }
 
@@ -10,3 +12,15 @@
     padding-left: 3rem !important;
     padding-right: 3rem !important;
 }*/
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+{
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+input[type=number] 
+{
+    -moz-appearance: textfield !important;
+}

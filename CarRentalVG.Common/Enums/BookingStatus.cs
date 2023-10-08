@@ -5,11 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CarRentalVG.Common.Enums;
-
-public enum VehicleTypes
+public enum BookingStatus
 {
-    Van,
-    Combi,
-    Motorcycle,
-    Sedan
+    Closed,
+    Open
 }

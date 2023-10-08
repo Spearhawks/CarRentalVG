@@ -7,5 +7,9 @@ using System.Threading.Tasks;
 namespace CarRentalVG.Common.Interfaces;
 public interface IPerson
 {
-    int Id { get; }
+    public int Id { get; set; }
+    public int SSN { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+
 }

@@ -1,23 +1,18 @@
-﻿using CarRentalVG.Common.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CarRentalVG.Common.Classes;
+using CarRentalVG.Common.Enums;
+using CarRentalVG.Common.Interfaces;
 
 namespace CarRentalVG.Data.Interfaces;
 public interface IData
 {
-    List<T> Get<T>(Expression<Func<T, bool>>? expression);
-    T? GetSingle<T>(Expression<Func<T, bool>>? expression);
-    public void Add<T>(T item);
-
-    int NextVehicleId {  get; }
-    int NextPersonId { get; }
-    int NextBookingId { get; }
-
-    string[] VehicleTypeNames { get; }
-    string[] RentedStatusNames { get; }
+    public string[] RentedStatusNames { get; set; }
+    public string[] VehicleTypeNames { get; set; }
     public VehicleTypes GetVehicleType(string name);
+    public IEnumerable<IPerson> GetPersons();
+    //public void Add<T>();
+
+    // Tillfällig metod
+    public void AddPers(Customer c);
+    IEnumerable<IVehicle> GetVehicles();
+    IEnumerable<IBooking> GetBookings();
 }
