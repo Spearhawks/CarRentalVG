@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CarRentalVG.Common.Classes;
 public class Vehicle : IVehicle
 {
-    public int Id {get; private set;}
+    public int Id {get; init;}
     public string RegistrationNo { get; set; }
     public int Odometer { get; set; }
     public double CostPerKm { get; set; }

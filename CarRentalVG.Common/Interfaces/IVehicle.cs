@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CarRentalVG.Common.Interfaces;
 public interface IVehicle
 {
-    public int Id { get; }
+    public int Id { get; init; }
     public string RegistrationNo { get; set; }
     public int Odometer { get; set; }
     public double CostPerKm { get; set; }

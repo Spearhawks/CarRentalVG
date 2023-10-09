@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace CarRentalVG.Common.Classes;
 public class Booking : IBooking
 {
+    public int Id { get; init; }
     public string RegistrationNo { get; set; }
     public Customer Customer { get; set; }
     public int KmRented { get; set; }

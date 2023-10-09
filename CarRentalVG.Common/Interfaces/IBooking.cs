@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace CarRentalVG.Common.Interfaces;
 public interface IBooking
 {
+    public int Id { get; init; }
     public string RegistrationNo { get; set; }
     public Customer Customer { get; set; }
     public int KmRented { get; set; }

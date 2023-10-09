@@ -21,19 +21,19 @@ public class Data : IData
         var todayDate = DateOnly.FromDateTime(DateTime.Today);
         var rentedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-5));
 
-        _persons.Add(new Customer { SSN = 1, FirstName = "John", LastName = "Doe" });
-        _persons.Add(new Customer { SSN = 2, FirstName = "The", LastName = "Rock" });
-        _persons.Add(new Customer { SSN = 3, FirstName = "Dwayne", LastName = "Johnson" });
-        _persons.Add(new Customer { SSN = 4, FirstName = "Bobba", LastName = "Fett" });
-        _vehicles.Add(new Car("ABC123", "Volvo", 3233, 1.2, 300, VehicleTypes.Van, RentedStatus.Rented));
-        _vehicles.Add(new Car("CBA321", "Opel", 1111, 1.1, 200, VehicleTypes.Combi, RentedStatus.Available));
-        _bookings.Add(new Booking { RegistrationNo = "ABC123", Customer = (Customer)_persons[0], KmRented = 3233, KmReturned = 0, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
+        _persons.Add(new Customer { Id = NextPersonId, SSN = 1, FirstName = "John", LastName = "Doe" });
+        _persons.Add(new Customer { Id = NextPersonId, SSN = 2, FirstName = "The", LastName = "Rock" });
+        _persons.Add(new Customer { Id = NextPersonId, SSN = 3, FirstName = "Dwayne", LastName = "Johnson" });
+        _persons.Add(new Customer { Id = NextPersonId, SSN = 4, FirstName = "Bobba", LastName = "Fett" });
+        _vehicles.Add(new Car( NextVehicleId, "ABC123", "Volvo", 3233, 1.2, 300, VehicleTypes.Van, RentedStatus.Rented));
+        _vehicles.Add(new Car( NextVehicleId, "CBA321", "Opel", 1111, 1.1, 200, VehicleTypes.Combi, RentedStatus.Available));
+        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = (Customer)_persons[0], KmRented = 3233, KmReturned = 0, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
     }
 
     // Dessa genererar ett fake Id för de olika posterna i listorna. Anropa vid skapande av ett item.
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
-    public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
+    public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
 
 
     // Får ut arrays med enum konstanter, kolla upp mer hur dessa ska användas.

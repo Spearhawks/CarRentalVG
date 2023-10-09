@@ -17,15 +17,24 @@ public class BookingManager
     public string _firstName;
     public string _lastName;
     public int? _kmreturned;
+    public bool delayed = false;
+    public string _regno;
+    public string _make;
+    public int _odom;
+    public double _costkm;
+    public int _costday;
+    public VehicleTypes _vehicletype;
+    public RentedStatus _rentedStatus;
 
     #endregion
 
     /// <summary>
-    ///  Fixa dessa 6 metoder.
+    ///  Fixa dessa metoder så de anropar de generiska metoderna i Data.
     /// </summary>
     /// <returns></returns>
     // public IEnumerable<IBooking> GetBookings() { return null; }
-    //public IEnumerable<Customer> GetCustomers() { return null; }
+    // public IEnumerable<Customer> GetCustomers() { return null; }
+
     public IPerson? GetPerson(string ssn) { return null; }
     public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default) { return null; }
     public IVehicle? GetVehicle(int vehicleId) { return null; }
@@ -33,6 +42,8 @@ public class BookingManager
 
     public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
+        Task.Delay(10000).Wait(); // Kolla upp mer hur denna ska användas.
+        // Addera mha Add<T> metoden till Bookings. Skapa ett Booking-objekt och skicka det till metoden.
         return null;
     }
     public IBooking ReturnVehicle(int vehicleID, double distance)
@@ -41,8 +52,9 @@ public class BookingManager
     }
     public void AddVehicle(string make, string regNo, double odometer, double costKm, RentedStatus status, VehicleTypes type)
     {
-
+        // Skapa ett fordon beroende på type, skicka den till Add<T>
     }
+    // Gör om denna så den skapar via Add<T> istället.
     public void AddCustomers(int ssn, string firstName, string lastName)
     {
         var c = new Customer(ssn, firstName, lastName);
@@ -54,6 +66,7 @@ public class BookingManager
 
     /// <summary>
     /// Metoder som inte ska användas i slutprodukten.
+    /// Ta bort eller ändra dem så de anropar de generiska metoderna.
     /// </summary>
     /// <returns></returns>
     public IEnumerable<Customer> GetCustomers() => _db.GetPersons().OfType<Customer>();
@@ -78,7 +91,6 @@ Datalagret:
 Common:
     - Car och Motrocycle ska ärva från Vehicle.
     - Läs på om arv.
-    - Id på alla listor.
 
 Business:
     - RentVehicle metoden ska vara asynkron och låsa alla knappar i typ 10 sekunder.
@@ -86,14 +98,8 @@ Business:
 
 Index:
     - När rent-klickas så ta och hämta id på vehicle och customer och skicka in dem i RentVehicle.
-
-
-
-
-
-
-
-
-
+    - När add-button klickas så ska fälten rensas.
+    - Kontrollera så att ssn eller regno inte redan finns.
+    - Skapa egen exception för att hantera fel.
  
  */
