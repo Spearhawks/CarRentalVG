@@ -3,6 +3,7 @@ using CarRentalVG.Common.Classes;
 using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Interfaces;
 using CarRentalVG.Data.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace CarRentalVG.Business;
 
@@ -13,7 +14,7 @@ public class BookingManager
 
     #region Index.razor code
 
-    public int? _ssn;
+    public int _ssn;
     public string _firstName;
     public string _lastName;
     public int? _kmreturned;
@@ -25,6 +26,7 @@ public class BookingManager
     public int _costday;
     public VehicleTypes _vehicletype;
     public RentedStatus _rentedStatus;
+    public string error = string.Empty;
 
     #endregion
 
@@ -39,7 +41,6 @@ public class BookingManager
     public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default) { return null; }
     public IVehicle? GetVehicle(int vehicleId) { return null; }
     public IVehicle? GetVehicle(string regNo) { return null; }
-
     public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
         Task.Delay(10000).Wait(); // Kolla upp mer hur denna ska användas.
@@ -48,6 +49,9 @@ public class BookingManager
     }
     public IBooking ReturnVehicle(int vehicleID, double distance)
     {
+        // Här används extensionklassen VehicleExtensions metod Duration för att beräkna tiden fordonet varit uthyrt.
+
+
         return null;
     }
     public void AddVehicle(string make, string regNo, double odometer, double costKm, RentedStatus status, VehicleTypes type)
@@ -57,9 +61,18 @@ public class BookingManager
     // Gör om denna så den skapar via Add<T> istället.
     public void AddCustomers(int ssn, string firstName, string lastName)
     {
-        var c = new Customer(ssn, firstName, lastName);
-        _db.AddPers(c);
+        if (ssn != 0 && firstName != null && lastName != null)
+        {
+            // Göra en kontroll om SSN finns redan också?
+            _db.AddPers(new Customer(ssn, firstName, lastName));
+            error = string.Empty;
+        }
+        else
+            error = "Nåt gick fel försök igen.";
+            
     }
+    
+    // Behövs dessa 3?
     public string[] VehicleStatusNames => _db.RentedStatusNames;
     public string[] VehicleTypeNames => _db.VehicleTypeNames;
     public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);

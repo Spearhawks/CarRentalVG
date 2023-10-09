@@ -4,6 +4,13 @@
 
 <PageTitle>Index</PageTitle>
 
+@if(bm.error != string.Empty)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <p>@bm.error</p>
+    </div>
+}
+
 <div class="mt-5"><h3>Vehicles</h3></div>
 <div class="d-flex p-2 table-responsive-sm">
     <table class="table border border-info table-bordered">
@@ -28,10 +35,10 @@
             <td>
                 <select class="form-select-sm">
                     <option value="" ></option>
-@*                     <option value="Sedan" @bind="bm._vehicletype">Sedan</option>
-                    <option value="Combi" @bind="bm._vehicletype">Combi</option>
-                    <option value="Van" @bind="bm._vehicletype">Van</option>
-                    <option value="Motorcycle" @bind="bm._vehicletype">Motorcycle</option> *@
+                    <option value="Sedan">Sedan</option>
+                    <option value="Combi">Combi</option>
+                    <option value="Van">Van</option>
+                    <option value="Motorcycle">Motorcycle</option>
                 </select>
             </td>
                 <td><input type="number" @bind="bm._costday" style="width: 40px;" /></td>
@@ -123,7 +130,7 @@
                 <td><input type="number" size="10" @bind="bm._ssn" placeholder="SSN" /></td>
                 <td><input type="text" size="10" @bind="bm._lastName" placeholder="Last Name" /></td>
                 <td><input type="text" size="10" @bind="bm._firstName" placeholder="First Name" /></td>
-                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers((int)bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
+                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers(bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
             </tr>
             @foreach (var p in bm.GetCustomers())
             {

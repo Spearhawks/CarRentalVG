@@ -36,9 +36,8 @@ public class Data : IData
     public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
 
 
-    // Får ut arrays med enum konstanter, kolla upp mer hur dessa ska användas.
+    // Får ut arrays med enum konstanter, kolla upp mer hur dessa ska användas. Ev. behövs de inte.
     public string[] RentedStatusNames { get; set; }
-
     public string[] VehicleTypeNames { get; set; }
 
 
