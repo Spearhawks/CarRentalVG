@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace CarRentalVG.Common.Extensions;
 public static class VehicleExtensions
 {
-    public static int Duration(this DateTime startDate, DateTime endDate)
+    public static int Duration(this DateOnly startDate, DateOnly endDate)
     {
-        return 0;
+        return endDate.Day - startDate.Day;
     }
 }
