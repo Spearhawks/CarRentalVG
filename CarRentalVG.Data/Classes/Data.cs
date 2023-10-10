@@ -10,6 +10,7 @@ namespace CarRentalVG.Data.Classes;
 public class Data : IData
 {
     #region Lists and constructor
+
     private List<IPerson> _persons = new();
     private List<IBooking> _bookings = new List<IBooking>();
     private List<IVehicle> _vehicles = new List<IVehicle>();
@@ -49,7 +50,20 @@ public class Data : IData
 
     public List<T> Get<T>(Expression<Func<T, bool>>? expression)
     {
-        throw new NotImplementedException();
+        if (typeof(T) == typeof(Vehicle))
+        {
+            return _vehicles.OfType<T>().ToList();
+        }
+        else if (typeof(T) == typeof(Booking))
+        {
+            return _bookings.OfType<T>().ToList();
+        }
+        else if (typeof(T) == typeof(Customer))
+        {
+            return _persons.OfType<T>().ToList();
+        }
+        else
+            throw new Exception();
     }
        
     public T? GetSingle<T>(Expression<Func<T, bool>>? expression)

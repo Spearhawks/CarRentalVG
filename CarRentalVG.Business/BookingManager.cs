@@ -3,6 +3,9 @@ using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Extensions;
 using CarRentalVG.Common.Interfaces;
 using CarRentalVG.Data.Interfaces;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace CarRentalVG.Business;
 
@@ -44,7 +47,20 @@ public class BookingManager
     //public IPerson? GetPerson(string ssn) { return null; }
     //public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default) { return null; }
     //public IVehicle? GetVehicle(int vehicleId) { return null; }
-    //public IVehicle? GetVehicle(string regNo) { return null; }
+    // public IVehicle? GetVehicle(string regNo) { return null; }
+
+    public IVehicle? GetVehicle(int vehicleId) 
+    {
+        //var dataLayerInstance = new Data.Classes.Data()
+        Type type = typeof(Vehicle);
+
+        MethodInfo methodInfo = typeof(Data.Classes.Data)
+            .GetMethod("Get", BindingFlags.Public | BindingFlags.Instance)
+            .MakeGenericMethod(type);
+
+        Expression<Func<Vehicle, bool>> expression = v => v.Id == vehicleId;
+        return (IVehicle?)methodInfo.Invoke(_db, new object[] { expression });
+    }
 
     #endregion
 
