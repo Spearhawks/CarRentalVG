@@ -1,6 +1,7 @@
 ﻿using CarRentalVG.Common;
 using CarRentalVG.Common.Classes;
 using CarRentalVG.Common.Enums;
+using CarRentalVG.Common.Extensions;
 using CarRentalVG.Common.Interfaces;
 using CarRentalVG.Data.Interfaces;
 using System.Runtime.CompilerServices;
@@ -12,35 +13,36 @@ public class BookingManager
     private readonly IData _db;
     public BookingManager(IData db) => _db = db;
 
-    #region Index.razor code
+    #region Index.razor code and variables.
 
-    public int _ssn;
-    public string _firstName;
-    public string _lastName;
+    public int? _ssn;
+    public string _firstName = string.Empty;
+    public string _lastName = string.Empty;
     public int? _kmreturned;
     public bool delayed = false;
-    public string _regno;
-    public string _make;
-    public int _odom;
-    public double _costkm;
-    public int _costday;
+    public string _regno = string.Empty;
+    public string _make = string.Empty;
+    public int? _odom;
+    public double? _costkm;
+    public int? _costday;
     public VehicleTypes _vehicletype;
     public RentedStatus _rentedStatus;
     public string error = string.Empty;
 
     #endregion
 
-    /// <summary>
-    ///  Fixa dessa metoder så de anropar de generiska metoderna i Data.
-    /// </summary>
-    /// <returns></returns>
+    #region Metoder som ska anropa generiska metoder i Data.
+
     // public IEnumerable<IBooking> GetBookings() { return null; }
     // public IEnumerable<Customer> GetCustomers() { return null; }
+    //public IPerson? GetPerson(string ssn) { return null; }
+    //public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default) { return null; }
+    //public IVehicle? GetVehicle(int vehicleId) { return null; }
+    //public IVehicle? GetVehicle(string regNo) { return null; }
 
-    public IPerson? GetPerson(string ssn) { return null; }
-    public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default) { return null; }
-    public IVehicle? GetVehicle(int vehicleId) { return null; }
-    public IVehicle? GetVehicle(string regNo) { return null; }
+    #endregion
+
+    #region Metoder för att hyra, returnera och addera fordon och kunder.
     public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
         Task.Delay(10000).Wait(); // Kolla upp mer hur denna ska användas.
@@ -50,13 +52,24 @@ public class BookingManager
     public IBooking ReturnVehicle(int vehicleID, double distance)
     {
         // Här används extensionklassen VehicleExtensions metod Duration för att beräkna tiden fordonet varit uthyrt.
-
+        // Ta uthyrningsdatumet samt dagens datum. Skicka in dessa i duration och sätt sen värdet på Cost på bookningen med aktuellt bookingID.
+        // Sätt rätt status på fordonet i listan med fordon.
+        // 
 
         return null;
     }
-    public void AddVehicle(string make, string regNo, double odometer, double costKm, RentedStatus status, VehicleTypes type)
+    public void AddVehicle(string make, string regNo, int odometer, double costKm, RentedStatus status, VehicleTypes type)
     {
         // Skapa ett fordon beroende på type, skicka den till Add<T>
+        switch(type)
+        {
+            case VehicleTypes.Motorcycle:
+                _db.Add<Vehicle>(new Motorcycle(_db.NextVehicleId, regNo, make, odometer, costKm, (int)_costday, status, type));
+                break;
+            default:
+                _db.Add<Vehicle>(new Car(_db.NextVehicleId, regNo, make, odometer, costKm, (int)_costday, status, type));
+                break;
+        }
     }
     // Gör om denna så den skapar via Add<T> istället.
     public void AddCustomers(int ssn, string firstName, string lastName)
@@ -64,18 +77,21 @@ public class BookingManager
         if (ssn != 0 && firstName != null && lastName != null)
         {
             // Göra en kontroll om SSN finns redan också?
-            _db.AddPers(new Customer(ssn, firstName, lastName));
+          //  _db.AddPers(new Customer(ssn, firstName, lastName));
+
+            _db.Add<Customer>(new Customer(ssn, firstName, lastName));
             error = string.Empty;
         }
         else
             error = "Nåt gick fel försök igen.";
+
+
             
     }
-    
-    // Behövs dessa 3?
-    public string[] VehicleStatusNames => _db.RentedStatusNames;
-    public string[] VehicleTypeNames => _db.VehicleTypeNames;
-    public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
+
+    #endregion
+
+    #region Tillfällig och ev. onödig kod.
 
     /// <summary>
     /// Metoder som inte ska användas i slutprodukten.
@@ -85,6 +101,14 @@ public class BookingManager
     public IEnumerable<Customer> GetCustomers() => _db.GetPersons().OfType<Customer>();
     public IEnumerable<IVehicle> GetVehicles() => _db.GetVehicles();
     public IEnumerable<IBooking> GetBookings() => _db.GetBookings();
+
+
+    // Behövs dessa 3?
+    //public string[] VehicleStatusNames => _db.RentedStatusNames;
+    //public string[] VehicleTypeNames => _db.VehicleTypeNames;
+    //public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
+
+    #endregion
 }
 
 

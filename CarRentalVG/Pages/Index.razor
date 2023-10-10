@@ -31,18 +31,18 @@
             <td><input type="text" @bind="bm._regno" size="10" /></td>
             <td><input type="text" @bind="bm._make" size="10" /></td>
             <td><input type="number" @bind="bm._odom" size="10" /></td>
-            <td><input type="text" @bind="bm._costkm" size="10" /></td>
+            <td><input type="number" step="0.1" @bind="bm._costkm" size="10" /></td>
             <td>
-                <select class="form-select-sm">
-                    <option value="" ></option>
-                    <option value="Sedan">Sedan</option>
+                <select @bind="@bm._vehicletype" class="form-select-sm">
+                    <option value=""></option>
                     <option value="Combi">Combi</option>
-                    <option value="Van">Van</option>
                     <option value="Motorcycle">Motorcycle</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="Van">Van</option>
                 </select>
             </td>
-                <td><input type="number" @bind="bm._costday" style="width: 40px;" /></td>
-                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddVehicle(bm._make, bm._regno, bm._odom, bm._costkm, bm._rentedStatus, bm._vehicletype))">Add</button></td>
+                <td><input type="number" onfocus="" @bind="bm._costday" style="width: 40px;" /></td>
+                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddVehicle(bm._make, bm._regno, (int)bm._odom, (double)bm._costkm, bm._rentedStatus, bm._vehicletype))">Add</button></td>
             <td></td> 
         </tr>
             @foreach (var v in bm.GetVehicles())
@@ -130,7 +130,7 @@
                 <td><input type="number" size="10" @bind="bm._ssn" placeholder="SSN" /></td>
                 <td><input type="text" size="10" @bind="bm._lastName" placeholder="Last Name" /></td>
                 <td><input type="text" size="10" @bind="bm._firstName" placeholder="First Name" /></td>
-                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers(bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
+                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers((int)bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
             </tr>
             @foreach (var p in bm.GetCustomers())
             {

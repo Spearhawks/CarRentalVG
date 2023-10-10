@@ -8,8 +8,8 @@ namespace CarRentalVG.Common.Enums;
 
 public enum VehicleTypes
 {
-    Van,
     Combi,
     Motorcycle,
-    Sedan
+    Sedan,
+    Van
 }

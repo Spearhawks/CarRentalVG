@@ -3,7 +3,7 @@
 namespace CarRentalVG.Common.Classes;
 public class Car : Vehicle
 {
-    public Car(int id, string regNo, string make, int odoMe, double costKm, int costDay, VehicleTypes vType, RentedStatus rentStatus) : base() 
+    public Car(int id, string regNo, string make, int odoMe, double costKm, int costDay, RentedStatus rentStatus, VehicleTypes vType) : base() 
     {
         Id = id;
         RegistrationNo = regNo;
@@ -14,5 +14,4 @@ public class Car : Vehicle
         VehicleType = vType;
         RentedStatus = rentStatus;
     }
-
 }
