@@ -50,7 +50,7 @@ public class Data : IData
 
     public List<T> Get<T>(Expression<Func<T, bool>>? expression)
     {
-        if (typeof(T) == typeof(Vehicle))
+        if (typeof(T) == typeof(IVehicle))
         {
             return _vehicles.OfType<T>().ToList();
         }

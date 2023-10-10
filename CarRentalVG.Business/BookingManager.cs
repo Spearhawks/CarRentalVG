@@ -44,28 +44,23 @@ public class BookingManager
 
     // public IEnumerable<IBooking> GetBookings() { return null; }
     // public IEnumerable<Customer> GetCustomers() { return null; }
-    //public IPerson? GetPerson(string ssn) { return null; }
-    //public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default) { return null; }
-    //public IVehicle? GetVehicle(int vehicleId) { return null; }
+    // public IPerson? GetPerson(string ssn) { return null; }
+    // public IVehicle? GetVehicle(int vehicleId) { return null; }
     // public IVehicle? GetVehicle(string regNo) { return null; }
+    // public IVehicle? GetVehicle(int vehicleId){ return null;}
 
-    public IVehicle? GetVehicle(int vehicleId) 
+    // Denna verkar fungera nu iaf för att fylla listan i index.
+    // Kolla upp expression m.m.
+    public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default)
     {
-        //var dataLayerInstance = new Data.Classes.Data()
-        Type type = typeof(Vehicle);
+        Expression<Func<IVehicle, bool>> expression = vehicle => vehicle.RentedStatus == status;
+        return _db.Get(expression).ToList();
+    }    
 
-        MethodInfo methodInfo = typeof(Data.Classes.Data)
-            .GetMethod("Get", BindingFlags.Public | BindingFlags.Instance)
-            .MakeGenericMethod(type);
+#endregion
 
-        Expression<Func<Vehicle, bool>> expression = v => v.Id == vehicleId;
-        return (IVehicle?)methodInfo.Invoke(_db, new object[] { expression });
-    }
-
-    #endregion
-
-    #region Methods for renting and returning vehicles.
-    public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
+#region Methods for renting and returning vehicles.
+public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
         _waitForFinish = true;
         await Task.Delay(5000);
@@ -135,7 +130,7 @@ public class BookingManager
     /// </summary>
     /// <returns></returns>
     public IEnumerable<Customer> GetCustomers() => _db.GetPersons().OfType<Customer>();
-    public IEnumerable<IVehicle> GetVehicles() => _db.GetVehicles();
+ //   public IEnumerable<IVehicle> GetVehicles() => _db.GetVehicles();
     public IEnumerable<IBooking> GetBookings() => _db.GetBookings();
 
 
