@@ -43,15 +43,8 @@ public class Data : IData
     #region Generic methods for getting and adding data to the lists.
     public void Add<T>(T item)
     {
-        if (item.GetType().Equals(typeof(Vehicle)))
-        {
-            _vehicles.Add((IVehicle)item);
-        }
-        else if(item.GetType().Equals(typeof(IPerson)))
-        {
-            _persons.Add((IPerson)item);
-        }
-        
+        if(item is IVehicle) { _vehicles.Add((IVehicle)item); }
+        else if( item is IPerson) { _persons.Add((IPerson)item); }
     }
 
     public List<T> Get<T>(Expression<Func<T, bool>>? expression)
@@ -80,15 +73,17 @@ public class Data : IData
     public IEnumerable<IVehicle> GetVehicles() => _vehicles;
     public IEnumerable<IBooking> GetBookings() => _bookings;
     public IEnumerable<IPerson> GetPersons() => _persons;
-    public void AddPers(Customer c)
-    {
-        _persons.Add(c);
-    }
+    
+    
+    //public void AddPers(Customer c)
+    //{
+    //    _persons.Add(c);
+    //}
 
-    public void AddBooking()
-    {
+    //public void AddBooking()
+    //{
 
-    }
+    //}
 
     //public List<IPerson> GetPersons()
     //{

@@ -15,7 +15,7 @@ public class BookingManager
 
     #region Index.razor code and variables.
 
-    public int? _ssn;
+    public int _ssn = 0;
     public string _firstName = string.Empty;
     public string _lastName = string.Empty;
     public int? _kmreturned;
@@ -61,7 +61,7 @@ public class BookingManager
     public void AddVehicle(string make, string regNo, int odometer, double costKm, RentedStatus status, VehicleTypes type)
     {
         // Skapa ett fordon beroende på type, skicka den till Add<T>
-        switch(type)
+        switch (type)
         {
             case VehicleTypes.Motorcycle:
                 _db.Add<Vehicle>(new Motorcycle(_db.NextVehicleId, regNo, make, odometer, costKm, (int)_costday, status, type));
@@ -71,22 +71,18 @@ public class BookingManager
                 break;
         }
     }
+    
+    
     // Gör om denna så den skapar via Add<T> istället.
     public void AddCustomers(int ssn, string firstName, string lastName)
     {
-        if (ssn != 0 && firstName != null && lastName != null)
+        if (ssn != 0 && firstName != string.Empty && lastName != string.Empty)
         {
-            // Göra en kontroll om SSN finns redan också?
-          //  _db.AddPers(new Customer(ssn, firstName, lastName));
-
-            _db.Add<Customer>(new Customer(ssn, firstName, lastName));
+            _db.Add(new Customer(ssn, firstName, lastName));
             error = string.Empty;
         }
         else
             error = "Nåt gick fel försök igen.";
-
-
-            
     }
 
     #endregion
@@ -121,13 +117,11 @@ Att göra:
 Datalagret:
     - Skapa generiska metoder i Data.
     - Läs på om expresions och reflection-metoder.
-    - Här ska metoder för att hyra och lämna tillbaka finnas.
-    - Använd metoderna för att lägga till Id+1 i listorna.
-    - Just nu så är det inga generiska metoder för Get eller Add.
+    - Just nu så är det inga generiska metoder för Get.
 
 Common:
-    - Car och Motrocycle ska ärva från Vehicle.
-    - Läs på om arv.
+    - Får inte riktigt arv att fungera från Vehicle.
+    - Behöver jag ha en konstruktor i derive-klassen?
 
 Business:
     - RentVehicle metoden ska vara asynkron och låsa alla knappar i typ 10 sekunder.
@@ -137,6 +131,6 @@ Index:
     - När rent-klickas så ta och hämta id på vehicle och customer och skicka in dem i RentVehicle.
     - När add-button klickas så ska fälten rensas.
     - Kontrollera så att ssn eller regno inte redan finns.
-    - Skapa egen exception för att hantera fel.
+    - Skapa egen exception för att hantera fel?
  
  */

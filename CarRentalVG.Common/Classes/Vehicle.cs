@@ -13,10 +13,11 @@ public class Vehicle : IVehicle
     public VehicleTypes VehicleType { get; set; }
     public RentedStatus RentedStatus { get; set; } = RentedStatus.Available;
 
-    public Vehicle(){}
     public Vehicle(int id, string regNo, string make, int odometer, double costKm, int costDay, VehicleTypes vehicleType, RentedStatus status)
-        => (Id, RegistrationNo, Make, Odometer, CostPerKm, CostPerDay, VehicleType, RentedStatus) 
+        => (Id, RegistrationNo, Make, Odometer, CostPerKm, CostPerDay, VehicleType, RentedStatus)
         = (id, regNo, make, odometer, costKm, costDay, vehicleType, status);
 
-
+    public Vehicle()
+    {
+    }
 }
