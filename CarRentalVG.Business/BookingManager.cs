@@ -33,8 +33,8 @@ public class BookingManager
     public VehicleTypes _vehicletype;
     public RentedStatus _rentedStatus;
     public string error = string.Empty;
-    public static DateOnly startDate = new DateOnly();
-    public static DateOnly endDate = new DateOnly();
+    public static DateOnly startDate = new();
+    public static DateOnly endDate = new();
     public bool _waitForFinish = false;
     public int _customerId;
 
@@ -44,31 +44,46 @@ public class BookingManager
 
     // public IEnumerable<IBooking> GetBookings() { return null; }
     // public IEnumerable<Customer> GetCustomers() { return null; }
+
     // public IPerson? GetPerson(string ssn) { return null; }
     // public IVehicle? GetVehicle(int vehicleId) { return null; }
     // public IVehicle? GetVehicle(string regNo) { return null; }
-    // public IVehicle? GetVehicle(int vehicleId){ return null;}
+    // public IVehicle? GetVehicle(int vehicleId){ return null; }
 
-    // Denna verkar fungera nu iaf för att fylla listan i index.
-    // Kolla upp expression m.m.
-    public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default)
+    public string[] VehicleStatusNames => _db.RentedStatusNames;
+    public string[] VehicleTypeNames => _db.VehicleTypeNames;
+    public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
+
+    public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
-        Expression<Func<IVehicle, bool>> expression = vehicle => vehicle.RentedStatus == status;
+        Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.RentedStatus == status;
         return _db.Get(expression);
-    }    
+    }
+    public IEnumerable<Customer> GetCustomers()
+    {
+        Expression<Func<Customer, bool>> expression = customer => customer.Equals(this);
+        return _db.Get(expression);
+    }
+    public IEnumerable<IBooking> GetBookings()
+    { 
+        Expression<Func<Booking, bool>> expression = booking => booking.Equals(true);
+        return _db.Get(expression);
+    }
 
-#endregion
+    #endregion
 
-#region Methods for renting and returning vehicles.
-public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
+    #region Methods for renting and returning vehicles.
+    public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
         _waitForFinish = true;
         await Task.Delay(5000);
+
 
         // Hämta vehicle och customer på id:et och adda booking med det.
         // AddBooking();
 
         // Addera mha Add<T> metoden till Bookings. Skapa ett Booking-objekt och skicka det till metoden.
+        // Sätt RentedStatus till Rented på Vehicle.
         
         
         _waitForFinish = false;
@@ -104,25 +119,25 @@ public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
             switch (type)
             {
                 case VehicleTypes.Motorcycle:
-                    _db.Add<Vehicle>(new Motorcycle(_db.NextVehicleId, regNo, make, odometer, costKm, (int)_costday, status, type));
+                    _db.Add<Vehicle>(new Motorcycle(){ Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
                     break;
                 default:
-                    _db.Add<Vehicle>(new Car(_db.NextVehicleId, regNo, make, odometer, costKm, (int)_costday, status, type));
+                    _db.Add<Vehicle>(new Car(){ Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type} );
                     break;
             }
         }
     }
-    public void AddCustomers(int ssn, string firstName, string lastName)
+    public void AddCustomers(int id, int ssn, string firstName, string lastName)
     {
         if (ssn != 0 && !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
         {
-            _db.Add(new Customer(ssn, firstName, lastName));
+            _db.Add(new Customer() { Id = _db.NextPersonId, SSN = ssn, FirstName = firstName, LastName = lastName });
             error = string.Empty;
         }
         else
             error = "Nåt gick fel försök igen.";
     }
-    public void AddBooking(IVehicle vehicle, Customer customer)
+    public void AddBooking(Vehicle vehicle, Customer customer)
     {
         var d = new DateOnly();
         d.AddDays(0);
@@ -153,15 +168,10 @@ public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     /// Ta bort eller ändra dem så de anropar de generiska metoderna.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<Customer> GetCustomers() => _db.GetPersons().OfType<Customer>();
- //   public IEnumerable<IVehicle> GetVehicles() => _db.GetVehicles();
-    public IEnumerable<IBooking> GetBookings() => _db.GetBookings();
 
 
-    // Behövs dessa?
-    //public string[] VehicleStatusNames => _db.RentedStatusNames;
-    //public string[] VehicleTypeNames => _db.VehicleTypeNames;
-    public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
+
+
 
     #endregion
 }
@@ -186,7 +196,8 @@ Business:
     - RentVehicle ska ta data från customer och vehicle och lägger ihop till en bokning.
         * Har en Add-metod nu som ska ta in ett vehicle och en booking, skapa ett booking objekt.
         * Det som är kvar att göra är att se hur jag får ut ett fordon och en kund mha Expression-metoder när jag har deras Id:n
-    - Måste vara unika SSN.
+    - Måste det vara unika SSN??
+    - Fixa dropdown arrayerna
 
 Index:
     - När rent-klickas så ta och hämta id på vehicle och customer och skicka in dem i RentVehicle.

@@ -1,5 +1,4 @@
-﻿using CarRentalVG.Common;
-using CarRentalVG.Common.Classes;
+﻿using CarRentalVG.Common.Classes;
 using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Interfaces;
 using CarRentalVG.Data.Interfaces;
@@ -12,8 +11,8 @@ public class Data : IData
     #region Lists and constructor
 
     private List<IPerson> _persons = new();
-    private List<IBooking> _bookings = new List<IBooking>();
-    private List<IVehicle> _vehicles = new List<IVehicle>();
+    private List<IBooking> _bookings = new();
+    private List<Vehicle> _vehicles = new();
 
     public Data() => SeedData();
 
@@ -30,48 +29,40 @@ public class Data : IData
         _persons.Add(new Customer { Id = NextPersonId, SSN = 2, FirstName = "The", LastName = "Rock" });
         _persons.Add(new Customer { Id = NextPersonId, SSN = 3, FirstName = "Dwayne", LastName = "Johnson" });
         _persons.Add(new Customer { Id = NextPersonId, SSN = 4, FirstName = "Bobba", LastName = "Fett" });
-        _vehicles.Add(new Car( NextVehicleId, "ABC123", "Volvo", 3233, 1.2, 300, RentedStatus.Rented, VehicleTypes.Van));
-        _vehicles.Add(new Car( NextVehicleId, "CBA321", "Opel", 1111, 1.1, 200, RentedStatus.Available, VehicleTypes.Combi));
-        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = (Customer)_persons[0], KmRented = 3233, KmReturned = 0, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
+        _vehicles.Add(new Car { Id = NextVehicleId, RegistrationNo = "ABC123", Make = "Volvo", Odometer = 3333, CostPerKm = 1.3, CostPerDay = 100, RentedStatus = RentedStatus.Rented, VehicleType = VehicleTypes.Van });
+        _vehicles.Add(new Car { Id = NextVehicleId, RegistrationNo = "CBA321", Make = "Opel", Odometer = 1111, CostPerKm = 1.1, CostPerDay = 200, RentedStatus = RentedStatus.Available, VehicleType = VehicleTypes.Combi });
+        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = (Customer)_persons[0], KmRented = 3333, KmReturned = 0, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
     }
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
     public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
-
 
     #endregion
 
     #region Generic methods for getting and adding data to the lists.
     public void Add<T>(T item)
     {
-        if(item is IVehicle) { _vehicles.Add((IVehicle)item); }
+        if(item is Vehicle) { _vehicles.Add(item as Vehicle); }
         else if( item is IPerson) { _persons.Add((IPerson)item); }
         else if( item is Booking) { _bookings.Add((IBooking)item); }
     }
-
     public List<T> Get<T>(Expression<Func<T, bool>>? expression)
     {
-        if (typeof(T) == typeof(IVehicle))
-        {
-            return _vehicles.OfType<T>().ToList();
-        }
-        else if (typeof(T) == typeof(Booking))
-        {
-            return _bookings.OfType<T>().ToList();
-        }
-        else if (typeof(T) == typeof(Customer))
-        {
-            return _persons.OfType<T>().ToList();
-        }
-        else
-            throw new Exception();
+        if (typeof(T) == typeof(Vehicle)) { return _vehicles.OfType<T>().ToList(); }
+        else if (typeof(T) == typeof(Booking)) { return _bookings.OfType<T>().ToList(); }
+        else if (typeof(T) == typeof(Customer)) { return _persons.OfType<T>().ToList(); }
+        else throw new Exception(); 
     }
-       
     public T? GetSingle<T>(Expression<Func<T, bool>>? expression)
     {
         throw new NotImplementedException();
     }
 
+    #endregion
+
+    #region Methods for getting types to dropdowns
+    public string[] RentedStatusNames { get; set; }
+    public string[] VehicleTypeNames { get; set; }
     public VehicleTypes GetVehicleType(string name)
     {
         throw new NotImplementedException();
@@ -79,41 +70,24 @@ public class Data : IData
 
     #endregion
 
+
+
+
     #region Tillfällig och kod utan ev. behov.
 
     /// <summary>
     /// Dessa använder jag bara tills jag har fixat de generiska metoderna.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IVehicle> GetVehicles() => _vehicles;
-    public IEnumerable<IBooking> GetBookings() => _bookings;
-    public IEnumerable<IPerson> GetPersons() => _persons;
-    
-    
-    //public void AddPers(Customer c)
-    //{
-    //    _persons.Add(c);
-    //}
 
-    //public void AddBooking()
-    //{
-
-    //}
-
+    // Kommer jag behöva denna?
     //public List<IPerson> GetPersons()
     //{
     //    throw new NotImplementedException();
     //}
 
-    // ReturnVehicle() + ReturnVehicle()
-    // Add() generisk.
-    // GetSingle() generisk.
-    // GetAll() generisk
-    // 
+    // Får ut arrays med enum konstanter, ska fylla på dropdowns.
 
-    // Får ut arrays med enum konstanter, kolla upp mer hur dessa ska användas. Ev. behövs de inte.
-    //public string[] RentedStatusNames { get; set; }
-    //public string[] VehicleTypeNames { get; set; }
 
     #endregion
 }
