@@ -29,13 +29,12 @@
         </thead>
     <tbody text="Vehicles">
         <tr>
-                <td><input disabled="@bm._waitForFinish" type="text" @bind="bm._regno" size="10" /></td>
-                <td><input type="text" disabled="@bm._waitForFinish" @bind="bm._make" size="10" /></td>
+                <td><input disabled="@bm._waitForFinish" type="text" @bind="bm._regno" size="10" placeholder="RegNo"/></td>
+                <td><input type="text" disabled="@bm._waitForFinish" @bind="bm._make" size="10" placeholder="Make" /></td>
                 <td><input type="number" disabled="@bm._waitForFinish" @bind="bm._odom" size="10" /></td>
                 <td><input type="number" disabled="@bm._waitForFinish" step="0.1" @bind="bm._costkm" size="10" /></td>
             <td>
                 <select disabled="@bm._waitForFinish" @bind="@bm._vehicletype" class="form-select-sm">
-                    <option value=""></option>
                     @foreach(var vt in Enum.GetValues(typeof(VehicleTypes)))
                     {
                         <option value="@vt">@vt.ToString()</option>
@@ -47,7 +46,7 @@
             <td>
                 @if(bm._waitForFinish == true)
                 {
-                    <span class="badge rounded-pill bg-secondary">Processing</span>
+                        <span class="badge rounded-pill bg-warning">Processing</span>
                 }
             </td> 
         </tr>
@@ -70,16 +69,14 @@
                 else
                 {
                     <td>
-                        <select disabled="@bm._waitForFinish" class="form-select-sm">
+                        <select @bind="bm._customerId" id="selectedCustId" disabled="@bm._waitForFinish" class="form-select-sm">
                             <option value=""></option>
                                 @foreach(var c in bm.GetCustomers())
                                 {
-                                    @* Denna kod ska fylla på med hela namnet på customers. Ändra denna, lite som jag gjorde på G.*@
-                                    <option value="FirstName">@c.FirstName</option> 
+                                    <option value="@c.Id">@c.FirstName @c.LastName</option>
                                 }
                         </select>
-                        @* Denna knapp anropar RentVehicle med vehicleid och custid. Se hur jag hämtar ut dessa id:n lättast.*@
-                        <button disabled="@bm._waitForFinish" class="btn btn-outline-danger btn-sm" @onclick=@(async () => await bm.RentVehicle(v.Id, 1))>Rent</button>
+                        <button disabled="@bm._waitForFinish" class="btn btn-outline-danger btn-sm" @onclick=@(async () => await bm.RentVehicle(v.Id, bm._customerId))>Rent</button>
                     </td>
                 }
                 <td><span class="badge rounded-pill bg-@(v.RentedStatus.ToString() == "Available" ? "success" : "danger")">@v.RentedStatus</span></td>

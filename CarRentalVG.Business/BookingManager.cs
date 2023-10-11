@@ -25,7 +25,6 @@ public class BookingManager
     public string _firstName = string.Empty;
     public string _lastName = string.Empty;
     public int? _kmreturned;
-    public bool delayed = false;
     public string _regno = string.Empty;
     public string _make = string.Empty;
     public int _odom;
@@ -37,6 +36,7 @@ public class BookingManager
     public static DateOnly startDate = new DateOnly();
     public static DateOnly endDate = new DateOnly();
     public bool _waitForFinish = false;
+    public int _customerId;
 
     #endregion
 
@@ -54,7 +54,7 @@ public class BookingManager
     public IEnumerable<IVehicle> GetVehicles(RentedStatus status = default)
     {
         Expression<Func<IVehicle, bool>> expression = vehicle => vehicle.RentedStatus == status;
-        return _db.Get(expression).ToList();
+        return _db.Get(expression);
     }    
 
 #endregion
@@ -64,6 +64,9 @@ public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
         _waitForFinish = true;
         await Task.Delay(5000);
+
+        // Hämta vehicle och customer på id:et och adda booking med det.
+        // AddBooking();
 
         // Addera mha Add<T> metoden till Bookings. Skapa ett Booking-objekt och skicka det till metoden.
         
@@ -119,7 +122,28 @@ public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
         else
             error = "Nåt gick fel försök igen.";
     }
-    
+    public void AddBooking(IVehicle vehicle, Customer customer)
+    {
+        var d = new DateOnly();
+        d.AddDays(0);
+
+        if (vehicle is null || customer is null)
+        {
+            error = "Nåt gick fel försök igen.";
+        }
+        else
+        {
+            _db.Add(new Booking
+            {
+                Id = _db.NextBookingId,
+                RegistrationNo = vehicle.RegistrationNo,
+                Customer = customer,
+                KmRented = vehicle.Odometer,
+                Rented = d,
+                Status = BookingStatus.Open
+            });
+        }
+    }
     #endregion
 
     #region Tillfällig och ev. onödig kod.
@@ -160,6 +184,9 @@ Common:
 
 Business:
     - RentVehicle ska ta data från customer och vehicle och lägger ihop till en bokning.
+        * Har en Add-metod nu som ska ta in ett vehicle och en booking, skapa ett booking objekt.
+        * Det som är kvar att göra är att se hur jag får ut ett fordon och en kund mha Expression-metoder när jag har deras Id:n
+    - Måste vara unika SSN.
 
 Index:
     - När rent-klickas så ta och hämta id på vehicle och customer och skicka in dem i RentVehicle.

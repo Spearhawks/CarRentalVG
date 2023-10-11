@@ -46,6 +46,7 @@ public class Data : IData
     {
         if(item is IVehicle) { _vehicles.Add((IVehicle)item); }
         else if( item is IPerson) { _persons.Add((IPerson)item); }
+        else if( item is Booking) { _bookings.Add((IBooking)item); }
     }
 
     public List<T> Get<T>(Expression<Func<T, bool>>? expression)
