@@ -29,10 +29,10 @@
         </thead>
     <tbody text="Vehicles">
         <tr>
-                <td><input disabled="@bm._waitForFinish" type="text" @bind="bm._regno" size="10" placeholder="RegNo"/></td>
-                <td><input type="text" disabled="@bm._waitForFinish" @bind="bm._make" size="10" placeholder="Make" /></td>
-                <td><input type="number" disabled="@bm._waitForFinish" @bind="bm._odom" size="10" onfocus="this.value=''" /></td>
-                <td><input type="number" disabled="@bm._waitForFinish" step="0.1" @bind="bm._costkm" size="10" onfocus="this.value=''" /></td>
+            <td><input disabled="@bm._waitForFinish" type="text" @bind="bm._regno" size="10" placeholder="RegNo"/></td>
+            <td><input type="text" disabled="@bm._waitForFinish" @bind="bm._make" size="10" placeholder="Make" /></td>
+            <td><input type="number" disabled="@bm._waitForFinish" @bind="bm._odom" size="10" onfocus="this.value=''" /></td>
+            <td><input type="number" disabled="@bm._waitForFinish" step="0.1" @bind="bm._costkm" size="10" onfocus="this.value=''" /></td>
             <td>
                 <select disabled="@bm._waitForFinish" @bind="@bm._vehicletype" class="form-select-sm">
                     @foreach(var vt in Enum.GetValues(typeof(VehicleTypes)))
@@ -41,8 +41,8 @@
                     }
                 </select>
             </td>
-                <td><input disabled="@bm._waitForFinish" type="number" @bind="bm._costday" onfocus="this.value=''" style="width: 40px;" /></td>
-                <td><button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddVehicle(bm._make, bm._regno, bm._odom, bm._costkm, bm._rentedStatus, bm._vehicletype))">Add</button></td>
+            <td><input disabled="@bm._waitForFinish" type="number" @bind="bm._costday" onfocus="this.value=''" style="width: 40px;" /></td>
+            <td><button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddVehicle(bm._make, bm._regno, bm._odom, bm._costkm, bm._rentedStatus, bm._vehicletype))">Add</button></td>
             <td>
                 @if(bm._waitForFinish == true)
                 {
@@ -62,8 +62,8 @@
                 @if(v.RentedStatus==Common.Enums.RentedStatus.Rented)
                 {
                     <td>
-                        <input onfocus="this.value=''" disabled="@bm._waitForFinish" type="number" @bind="bm._kmreturned" style="width: 40px;" />
-                        <button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm">Return</button>
+                        <input onfocus="this.value=''" disabled="@bm._waitForFinish" type="number" @bind="bm._kmreturned" placeholder="Distance" style="width: 125px;" />
+                        <button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm" @onclick="@(() => bm.ReturnVehicle(v.Id, bm._kmreturned))">Return</button>
                     </td>
                 }
                 else

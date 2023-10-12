@@ -23,7 +23,7 @@ public class Data : IData
     private void SeedData()
     {
         var todayDate = DateOnly.FromDateTime(DateTime.Today);
-        var rentedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-5));
+        var rentedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
 
         _persons.Add(new Customer { Id = NextPersonId, SSN = 1, FirstName = "John", LastName = "Doe" });
         _persons.Add(new Customer { Id = NextPersonId, SSN = 2, FirstName = "The", LastName = "Rock" });
@@ -31,7 +31,7 @@ public class Data : IData
         _persons.Add(new Customer { Id = NextPersonId, SSN = 4, FirstName = "Bobba", LastName = "Fett" });
         _vehicles.Add(new Car { Id = NextVehicleId, RegistrationNo = "ABC123", Make = "Volvo", Odometer = 3333, CostPerKm = 1.3, CostPerDay = 100, RentedStatus = RentedStatus.Rented, VehicleType = VehicleTypes.Van });
         _vehicles.Add(new Car { Id = NextVehicleId, RegistrationNo = "CBA321", Make = "Opel", Odometer = 1111, CostPerKm = 1.1, CostPerDay = 200, RentedStatus = RentedStatus.Available, VehicleType = VehicleTypes.Combi });
-        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = (Customer)_persons[0], KmRented = 3333, KmReturned = 0, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
+        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = (Customer)_persons[0], KmRented = 3333, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
     }
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
@@ -63,7 +63,7 @@ public class Data : IData
 
     #endregion
 
-    #region Methods for getting types to dropdowns
+    #region Methods for getting types from Enum.
     public string[] RentedStatusNames { get; set; }
     public string[] VehicleTypeNames { get; set; }
     public VehicleTypes GetVehicleType(string name)

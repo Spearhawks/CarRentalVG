@@ -19,8 +19,6 @@ public class Booking : IBooking
     public double Cost { get; set; }
     public BookingStatus Status { get; set; }
 
-
-
     public string CustomerOut(Customer c)
     {
         return $"{c.LastName} {c.FirstName} ({c.SSN})";

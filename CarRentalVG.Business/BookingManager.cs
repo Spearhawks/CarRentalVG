@@ -16,7 +16,7 @@ public class BookingManager
     private readonly IData _db;
     public BookingManager(IData db) => _db = db;
     private int duration = 0; // Använd extensionmetoden i returnmetoden.
-    
+
     #endregion
 
     #region Index.razor code and variables.
@@ -24,7 +24,7 @@ public class BookingManager
     public int? _ssn = 0;
     public string _firstName = string.Empty;
     public string _lastName = string.Empty;
-    public int? _kmreturned;
+    public int _kmreturned = 0;
     public string _regno = string.Empty;
     public string _make = string.Empty;
     public int _odom;
@@ -33,8 +33,8 @@ public class BookingManager
     public VehicleTypes _vehicletype;
     public RentedStatus _rentedStatus;
     public string error = string.Empty;
-    public static DateOnly startDate = new();
-    public static DateOnly endDate = new();
+    public static DateOnly startDate;
+    public static DateOnly endDate = DateOnly.FromDateTime(DateTime.Now);
     public bool _waitForFinish = false;
     public int _customerId;
 
@@ -51,22 +51,18 @@ public class BookingManager
         _costday = 0;
     }
 
-#endregion
+    #endregion
 
     #region Methods used for fetching data in the datalayer.
 
-// public IEnumerable<IBooking> GetBookings() { return null; }
-// public IEnumerable<Customer> GetCustomers() { return null; }
+    // public IPerson? GetPerson(string ssn) { return null; }
+    // public IVehicle? GetVehicle(int vehicleId) { return null; }
+    // public IVehicle? GetVehicle(string regNo) { return null; }
+    // public IVehicle? GetVehicle(int vehicleId){ return null; }
 
-// public IPerson? GetPerson(string ssn) { return null; }
-// public IVehicle? GetVehicle(int vehicleId) { return null; }
-// public IVehicle? GetVehicle(string regNo) { return null; }
-// public IVehicle? GetVehicle(int vehicleId){ return null; }
-
-public string[] VehicleStatusNames => _db.RentedStatusNames;
+    public string[] VehicleStatusNames => _db.RentedStatusNames;
     public string[] VehicleTypeNames => _db.VehicleTypeNames;
     public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
-
     public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
         Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.RentedStatus == status;
@@ -78,7 +74,7 @@ public string[] VehicleStatusNames => _db.RentedStatusNames;
         return _db.Get(expression);
     }
     public IEnumerable<IBooking> GetBookings()
-    { 
+    {
         Expression<Func<Booking, bool>> expression = booking => booking.Equals(this);
         return _db.Get(expression);
     }
@@ -88,38 +84,43 @@ public string[] VehicleStatusNames => _db.RentedStatusNames;
     #region Methods for renting and returning vehicles.
     public async Task<IBooking> RentVehicle(int vehicleId, int customerId)
     {
-        if(customerId != 0 &&  vehicleId != 0) 
-        { 
+        if (customerId != 0 && vehicleId != 0)
+        {
             _waitForFinish = true;
             await Task.Delay(5000);
 
-        // Hämtar vehicle och customer på id:et.
-        var c = GetCustomers().Single(x => x.Id == customerId);
-        var v = GetVehicles().Single(x => x.Id == vehicleId);
+            // Hämtar vehicle och customer på id:et.
+            var c = GetCustomers().Single(x => x.Id == customerId);
+            var v = GetVehicles().Single(x => x.Id == vehicleId);
 
-        if(v.RentedStatus.Equals(RentedStatus.Available))
-        {
-            AddBooking(v, c);
-            v.RentedStatus = RentedStatus.Rented;
-        }
+            if (v.RentedStatus.Equals(RentedStatus.Available))
+            {
+                AddBooking(v, c);
+                v.RentedStatus = RentedStatus.Rented;
+            }
 
             _waitForFinish = false;
         }
         return null;    // Returnera bookningen
     }
-    public IBooking ReturnVehicle(int vehicleID, double distance)
+    public IBooking ReturnVehicle(int vehicleID, int distance)
     {
-        duration = VehicleExtensions.Duration(startDate, endDate);
+        var v = GetVehicles().Single(x => x.Id == vehicleID);
+        var b = GetBookings().Single(x => x.Status == BookingStatus.Open && v.Id == vehicleID);
+
+        duration = VehicleExtensions.Duration(b.Rented, endDate);
+
+        v.Odometer += distance;
+        v.RentedStatus = RentedStatus.Available;
+
+        b.Cost = distance * v.CostPerKm + v.CostPerDay * duration;
+        b.Returned = endDate;
+        b.Status = BookingStatus.Closed;
+        b.KmReturned = v.Odometer;
 
 
-        // Sök fram fordonet, ta ut data för att beräkna cost.
-        // Här används extensionklassen VehicleExtensions metod Duration för att beräkna tiden fordonet varit uthyrt.
-        // Ta uthyrningsdatumet samt dagens datum och sätt dessa till startDate och endDate.
-        // Skicka sen dessa i duration och sätt sen värdet på Cost på bookningen med aktuellt bookingID.
-        // Sätt rätt status på fordonet i listan med fordon.
-
-
-        return null;
+    
+        return b;
     }
 
     #endregion
@@ -159,7 +160,7 @@ public string[] VehicleStatusNames => _db.RentedStatusNames;
     }
     public void AddBooking(Vehicle vehicle, Customer customer)
     {
-        DateOnly d = DateOnly.FromDateTime(DateTime.Now);
+        startDate = DateOnly.FromDateTime(DateTime.Now);
 
         if (vehicle is null || customer is null)
         {
@@ -173,25 +174,11 @@ public string[] VehicleStatusNames => _db.RentedStatusNames;
                 RegistrationNo = vehicle.RegistrationNo,
                 Customer = customer,
                 KmRented = vehicle.Odometer,
-                Rented = d,
+                Rented = startDate,
                 Status = BookingStatus.Open
             });
         }
     }
-    #endregion
-
-    #region Tillfällig och ev. onödig kod.
-
-    /// <summary>
-    /// Metoder som inte ska användas i slutprodukten.
-    /// Ta bort eller ändra dem så de anropar de generiska metoderna.
-    /// </summary>
-    /// <returns></returns>
-
-
-
-
-
     #endregion
 }
 
@@ -201,22 +188,26 @@ public string[] VehicleStatusNames => _db.RentedStatusNames;
 
 Att göra:
 
+Generellt:
+    - Try/catch?
+    - Se till att styra input?
+    - Ge mer specifika felmeddelanden?
 
 Datalagret:
-    - Fixa de generiska metoderna i Data.
+    - Fixa de generiska metoderna i Data?? Eller är de ok?
     - Läs på om expresions och reflection-metoder.
     - Just nu så är det inga generiska metoder för Get.
 
 Common:
 
 Business:
-    - RentVehicle ska ta data från customer och vehicle och lägger ihop till en bokning.
-        * Har en Add-metod nu som ska ta in ett vehicle och en booking, skapa ett booking objekt.
-        * Det som är kvar att göra är att se hur jag får ut ett fordon och en kund mha Expression-metoder när jag har deras Id:n
     - Måste det vara unika SSN??
-    - Fixa dropdown arrayerna
+    - Fixa dropdown arrayerna?
+    - Rensa cost efter return.
 
 Index:
-    - När add-button klickas så ska fälten rensas.
- 
+    - Delete-knappar?
+    - Ordna dropdown default och rensning.
+    - Fixa så att kmreturned inte sätts på alla uthyrda fordon.
+        * Flytta inputen?
  */
