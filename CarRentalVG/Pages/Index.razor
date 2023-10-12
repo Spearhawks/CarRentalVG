@@ -31,8 +31,8 @@
         <tr>
                 <td><input disabled="@bm._waitForFinish" type="text" @bind="bm._regno" size="10" placeholder="RegNo"/></td>
                 <td><input type="text" disabled="@bm._waitForFinish" @bind="bm._make" size="10" placeholder="Make" /></td>
-                <td><input type="number" disabled="@bm._waitForFinish" @bind="bm._odom" size="10" /></td>
-                <td><input type="number" disabled="@bm._waitForFinish" step="0.1" @bind="bm._costkm" size="10" /></td>
+                <td><input type="number" disabled="@bm._waitForFinish" @bind="bm._odom" size="10" onfocus="this.value=''" /></td>
+                <td><input type="number" disabled="@bm._waitForFinish" step="0.1" @bind="bm._costkm" size="10" onfocus="this.value=''" /></td>
             <td>
                 <select disabled="@bm._waitForFinish" @bind="@bm._vehicletype" class="form-select-sm">
                     @foreach(var vt in Enum.GetValues(typeof(VehicleTypes)))
@@ -41,7 +41,7 @@
                     }
                 </select>
             </td>
-                <td><input disabled="@bm._waitForFinish" type="number" onfocus="" @bind="bm._costday" style="width: 40px;" /></td>
+                <td><input disabled="@bm._waitForFinish" type="number" @bind="bm._costday" onfocus="this.value=''" style="width: 40px;" /></td>
                 <td><button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddVehicle(bm._make, bm._regno, bm._odom, bm._costkm, bm._rentedStatus, bm._vehicletype))">Add</button></td>
             <td>
                 @if(bm._waitForFinish == true)
@@ -62,7 +62,7 @@
                 @if(v.RentedStatus==Common.Enums.RentedStatus.Rented)
                 {
                     <td>
-                        <input disabled="@bm._waitForFinish" type="number" @bind="bm._kmreturned" style="width: 40px;" />
+                        <input onfocus="this.value=''" disabled="@bm._waitForFinish" type="number" @bind="bm._kmreturned" style="width: 40px;" />
                         <button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm">Return</button>
                     </td>
                 }
@@ -132,7 +132,7 @@
         </thead>
         <tbody>
             <tr>
-                <td><input type="number" size="10" @bind="bm._ssn" placeholder="SSN" /></td>
+                <td><input type="number" size="10" @bind="bm._ssn" placeholder="SSN" onfocus="this.value=''" /></td>
                 <td><input type="text" size="10" @bind="bm._lastName" placeholder="Last Name" /></td>
                 <td><input type="text" size="10" @bind="bm._firstName" placeholder="First Name" /></td>
                 <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers(default, (int)bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
@@ -143,7 +143,6 @@
                     <td>@p.SSN</td>
                     <td>@p.LastName</td>
                     <td>@p.FirstName</td>
-                    <td><button class="btn btn-outline-danger btn-sm">Delete</button></td>
                 </tr>
             }
         </tbody>
