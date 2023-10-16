@@ -21,7 +21,6 @@ public class Data : IData
     #endregion
 
     #region Methods for seeding the initial lists and adding Id to the objects in the list.
-
     private void SeedData()
     {
         var todayDate = DateOnly.FromDateTime(DateTime.Today);
@@ -33,7 +32,7 @@ public class Data : IData
         _customers.Add(new Customer { Id = NextPersonId, SSN = 4, FirstName = "Bobba", LastName = "Fett" });
         _vehicles.Add(new Car { Id = NextVehicleId, RegistrationNo = "ABC123", Make = "Volvo", Odometer = 3333, CostPerKm = 1.3, CostPerDay = 100, RentedStatus = RentedStatus.Rented, VehicleType = VehicleTypes.Van });
         _vehicles.Add(new Car { Id = NextVehicleId, RegistrationNo = "CBA321", Make = "Opel", Odometer = 1111, CostPerKm = 1.1, CostPerDay = 200, RentedStatus = RentedStatus.Available, VehicleType = VehicleTypes.Combi });
-        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = (Customer)_customers[0], KmRented = 3333, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
+        _bookings.Add(new Booking { Id = NextBookingId, RegistrationNo = "ABC123", Customer = _customers[0], KmRented = 3333, Rented = rentedDate, Cost = default, Status = BookingStatus.Open });
     }
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _customers.Count.Equals(0) ? 1 : _customers.Max(b => b.Id) + 1;
@@ -43,6 +42,7 @@ public class Data : IData
 
     #region Generic methods for getting and adding data to the lists.
 
+    // Denna metod är inte helt generisk. Fixa till.
     public void Add<T>(T item)
     {
         if(item is Vehicle) { _vehicles.Add(item as Vehicle); }
@@ -71,42 +71,22 @@ public class Data : IData
             throw new ArgumentException($"No such field found for type {typeof(T).Name}.");
         }
     }
-    public T? GetSingle<T>(Expression<Func<T, bool>>? expression)
-    {
-        throw new NotImplementedException();
-    }
+  
 
     #endregion
 
-    #region Methods for getting types from Enum.
-    public string[] RentedStatusNames { get; set; }
-    public string[] VehicleTypeNames { get; set; }
-    public VehicleTypes GetVehicleType(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    #endregion
-
-
-    public IEnumerable<Customer> GetCustomers() => (IEnumerable<Customer>)_customers;
-
-
-    #region Tillfällig och kod utan ev. behov.
-
-    /// <summary>
-    /// Dessa använder jag bara tills jag har fixat de generiska metoderna.
-    /// </summary>
-    /// <returns></returns>
-
-    // Kommer jag behöva denna?
-    //public List<IPerson> GetPersons()
+    #region Unused code
+    //public string[] RentedStatusNames { get; set; }
+    //public string[] VehicleTypeNames { get; set; }
+    //public VehicleTypes GetVehicleType(string name)
     //{
     //    throw new NotImplementedException();
     //}
 
-    // Får ut arrays med enum konstanter, ska fylla på dropdowns.
-
+    //public T? GetSingle<T>(Expression<Func<T, bool>>? expression)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     #endregion
 }

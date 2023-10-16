@@ -136,7 +136,7 @@
                 <td><input type="number" size="10" @bind="bm._ssn" placeholder="SSN" onfocus="this.value=''" /></td>
                 <td><input type="text" size="10" @bind="bm._lastName" placeholder="Last Name" /></td>
                 <td><input type="text" size="10" @bind="bm._firstName" placeholder="First Name" /></td>
-                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers(default, (int)bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
+                <td><button class="btn btn-outline-success btn-sm" @onclick="@(() => bm.AddCustomers((int)bm._ssn, bm._firstName, bm._lastName))">Add</button></td>
             </tr>
             @foreach (var p in bm.GetCustomers())
             {

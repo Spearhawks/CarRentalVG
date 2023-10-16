@@ -57,19 +57,6 @@ public class BookingManager
 
     #region Methods used for fetching data in the datalayer.
 
-    // public IPerson? GetPerson(string ssn) { return null; }
-    // public IVehicle? GetVehicle(int vehicleId) { return null; }
-    // public IVehicle? GetVehicle(string regNo) { return null; }
-    // public Vehicle? GetVehicle(int vehicleId)
-
-
-    #region Behöver jag de här?
-    public string[] VehicleStatusNames => _db.RentedStatusNames;
-    public string[] VehicleTypeNames => _db.VehicleTypeNames;
-    public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
-
-    #endregion
-
     public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
         Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.Id > 0;
@@ -112,27 +99,21 @@ public class BookingManager
     public IBooking ReturnVehicle(int vehicleID, int distance)
     {
         var v = GetVehicles().Single(x => x.Id == vehicleID && x.RentedStatus == RentedStatus.Rented);
+        var b = GetBookings().Single(x => x.RegistrationNo == v.RegistrationNo && x.Status == BookingStatus.Open);
 
-        if (v.RentedStatus == RentedStatus.Rented)
+        if (b != null)
         {
-            // Den här måste jag lösa på annat sätt, den fungerar bara när ett fordon är uthyrt.
-            var b = GetBookings().Single(x => x.Status == BookingStatus.Open && v.Id == vehicleID);
-            Console.WriteLine(b.ToString());
+            duration = b.Rented.Duration(endDate);
 
-            if (b != null)
-            {
-                duration = b.Rented.Duration(endDate);
+            v.Odometer += distance;
+            v.RentedStatus = RentedStatus.Available;
 
-                v.Odometer += distance;
-                v.RentedStatus = RentedStatus.Available;
-
-                b.Cost = distance * v.CostPerKm + v.CostPerDay * duration;
-                b.Returned = endDate;
-                b.Status = BookingStatus.Closed;
-                b.KmReturned = v.Odometer;
-
-                return b;
-            }
+            b.Cost = Math.Round((distance * v.CostPerKm + v.CostPerDay * duration), 2);
+            b.Returned = endDate;
+            b.Status = BookingStatus.Closed;
+            b.KmReturned = v.Odometer;
+            
+            return b;
         }
         return null;
     }
@@ -161,7 +142,7 @@ public class BookingManager
             SetDefaultValues();
         }
     }
-    public void AddCustomers(int id, int ssn, string firstName, string lastName)
+    public void AddCustomers(int ssn, string firstName, string lastName)
     {
         if (ssn != 0 && !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
         {
@@ -169,8 +150,7 @@ public class BookingManager
             error = string.Empty;
             SetDefaultValues();
         }
-        else
-            error = "Can not add customer, try again.";
+        else error = "Can not add customer, try again.";
     }
     public void AddBooking(Vehicle vehicle, Customer customer)
     {
@@ -194,7 +174,18 @@ public class BookingManager
         }
     }
     #endregion
+
+    #region Unused code
+    //public string[] VehicleStatusNames => _db.RentedStatusNames;
+    //public string[] VehicleTypeNames => _db.VehicleTypeNames;
+    //public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
+    // public IPerson? GetPerson(string ssn) { return null; }
+    // public IVehicle? GetVehicle(int vehicleId) { return null; }
+    // public IVehicle? GetVehicle(string regNo) { return null; }
+    // public Vehicle? GetVehicle(int vehicleId)
+    #endregion
 }
+
 
 
 /*
@@ -202,21 +193,24 @@ Att göra:
 
 Generellt:
     - Try/catch?
-    - Se till att styra input?
+    - Se till att styra input med regex?
+        * SSN
+        * Regno
     - Ge mer specifika felmeddelanden?
+    - Kolla över getter/setters.
+    - Rensa bort onödiga variablar.
+    - Kolla över vilka variablar och properties som kan sättas private/readonly och använda metoder och eller props för att hämta. 
 
 Datalagret:
-    - Fixa så att GetSingle() fungerar?
+    - Fixa så att GetSingle() fungerar? De behövs inte direkt.
 
 Common:
 
 Business:
-    - Måste det vara unika SSN??
+    - Unika SSN.
     - Fixa dropdown arrayerna?
-    - Rensa cost efter return.
+    - Rensa cost efter return? Textfält rensas på focus ändå.
 
 Index:
-    - Delete-knappar?
     - Ordna dropdown default och rensning.
-    - Fixa så att kmreturned inte sätts på alla uthyrda fordon.
  */
