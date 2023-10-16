@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using CarRentalVG.Business;
+@using CarRentalVG.Business.Classes;
 @using CarRentalVG.Common.Enums;
 @inject BookingManager bm;
 
@@ -62,8 +63,8 @@
                 @if(v.RentedStatus==Common.Enums.RentedStatus.Rented)
                 {
                     <td>
-                        <input onfocus="this.value=''" disabled="@bm._waitForFinish" type="number" @bind="bm._kmreturned" placeholder="Distance" style="width: 125px;" />
-                        <button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm" @onclick="@(() => bm.ReturnVehicle(v.Id, bm._kmreturned))">Return</button>
+                        <input onfocus="this.value=''" disabled="@bm._waitForFinish" type="number" @bind="bm.kmInput" placeholder="Distance" style="width: 125px;" />
+                        <button disabled="@bm._waitForFinish" class="btn btn-outline-success btn-sm" @onclick="@(() => bm.ReturnVehicle(v.Id, bm.kmInput))">Return</button>
                     </td>
                 }
                 else
@@ -148,5 +149,3 @@
         </tbody>
     </table>
 </div>
-
-

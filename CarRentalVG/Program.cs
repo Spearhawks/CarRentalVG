@@ -1,5 +1,5 @@
 using CarRentalVG;
-using CarRentalVG.Business;
+using CarRentalVG.Business.Classes;
 using CarRentalVG.Data.Classes;
 using CarRentalVG.Data.Interfaces;
 using Microsoft.AspNetCore.Components.Web;

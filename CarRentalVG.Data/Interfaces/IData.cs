@@ -1,4 +1,5 @@
-﻿using CarRentalVG.Common.Enums;
+﻿using CarRentalVG.Common.Classes;
+using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Interfaces;
 using System.Linq.Expressions;
 
@@ -13,4 +14,6 @@ public interface IData
     public string[] RentedStatusNames { get; set; }
     public string[] VehicleTypeNames { get; set; }
     public VehicleTypes GetVehicleType(string name);
+
+    public IEnumerable<Customer> GetCustomers();
 }

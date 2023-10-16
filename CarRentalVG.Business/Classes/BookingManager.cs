@@ -2,12 +2,13 @@
 using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Extensions;
 using CarRentalVG.Common.Interfaces;
+using CarRentalVG.Data.Classes;
 using CarRentalVG.Data.Interfaces;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace CarRentalVG.Business;
+namespace CarRentalVG.Business.Classes;
 
 public class BookingManager
 {
@@ -38,6 +39,8 @@ public class BookingManager
     public bool _waitForFinish = false;
     public int _customerId;
 
+    public int kmInput = 0;
+
     private void SetDefaultValues()
     {
         _ssn = 0;
@@ -58,24 +61,34 @@ public class BookingManager
     // public IPerson? GetPerson(string ssn) { return null; }
     // public IVehicle? GetVehicle(int vehicleId) { return null; }
     // public IVehicle? GetVehicle(string regNo) { return null; }
-    // public IVehicle? GetVehicle(int vehicleId){ return null; }
+    // public Vehicle? GetVehicle(int vehicleId)
+    //{ 
 
+    //}
+
+
+    #region Behöver jag de här?
     public string[] VehicleStatusNames => _db.RentedStatusNames;
     public string[] VehicleTypeNames => _db.VehicleTypeNames;
     public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
+
+    #endregion
+
+
     public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
-        Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.RentedStatus == status;
+        Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.Id > 0;
         return _db.Get(expression);
     }
     public IEnumerable<Customer> GetCustomers()
     {
-        Expression<Func<Customer, bool>> expression = customer => customer.Equals(this);
-        return _db.Get(expression);
+        Expression<Func<Customer, bool>> expression = customer => customer is IPerson;
+        var cust = _db.Get(expression);
+        return cust;
     }
     public IEnumerable<IBooking> GetBookings()
     {
-        Expression<Func<Booking, bool>> expression = booking => booking.Equals(this);
+        Expression<Func<Booking, bool>> expression = booking => booking.Id > 0;
         return _db.Get(expression);
     }
 
@@ -87,9 +100,9 @@ public class BookingManager
         if (customerId != 0 && vehicleId != 0)
         {
             _waitForFinish = true;
+
             await Task.Delay(5000);
 
-            // Hämtar vehicle och customer på id:et.
             var c = GetCustomers().Single(x => x.Id == customerId);
             var v = GetVehicles().Single(x => x.Id == vehicleId);
 
@@ -98,29 +111,35 @@ public class BookingManager
                 AddBooking(v, c);
                 v.RentedStatus = RentedStatus.Rented;
             }
-
             _waitForFinish = false;
         }
-        return null;    // Returnera bookningen
+        return null;
     }
     public IBooking ReturnVehicle(int vehicleID, int distance)
     {
         var v = GetVehicles().Single(x => x.Id == vehicleID);
-        var b = GetBookings().Single(x => x.Status == BookingStatus.Open && v.Id == vehicleID);
 
-        duration = VehicleExtensions.Duration(b.Rented, endDate);
+        if (v.RentedStatus == RentedStatus.Rented)
+        {
+            var b = GetBookings().SingleOrDefault(x => x.Status == BookingStatus.Open && v.Id == vehicleID);
 
-        v.Odometer += distance;
-        v.RentedStatus = RentedStatus.Available;
+            if (b != null)
+            {
+                duration = b.Rented.Duration(endDate);
 
-        b.Cost = distance * v.CostPerKm + v.CostPerDay * duration;
-        b.Returned = endDate;
-        b.Status = BookingStatus.Closed;
-        b.KmReturned = v.Odometer;
+                v.Odometer += distance;
+                v.RentedStatus = RentedStatus.Available;
 
+                b.Cost = distance * v.CostPerKm + v.CostPerDay * duration;
+                b.Returned = endDate;
+                b.Status = BookingStatus.Closed;
+                b.KmReturned = v.Odometer;
 
-    
-        return b;
+                kmInput = 0;
+                return b;
+            }
+        }
+        return null;
     }
 
     #endregion
@@ -138,10 +157,10 @@ public class BookingManager
             switch (type)
             {
                 case VehicleTypes.Motorcycle:
-                    _db.Add<Vehicle>(new Motorcycle(){ Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
+                    _db.Add<Vehicle>(new Motorcycle() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
                     break;
                 default:
-                    _db.Add<Vehicle>(new Car(){ Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type} );
+                    _db.Add<Vehicle>(new Car() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
                     break;
             }
             SetDefaultValues();
@@ -194,9 +213,7 @@ Generellt:
     - Ge mer specifika felmeddelanden?
 
 Datalagret:
-    - Fixa de generiska metoderna i Data?? Eller är de ok?
-    - Läs på om expresions och reflection-metoder.
-    - Just nu så är det inga generiska metoder för Get.
+    - Fixa så att GetSingle() fungerar.
 
 Common:
 
@@ -204,6 +221,7 @@ Business:
     - Måste det vara unika SSN??
     - Fixa dropdown arrayerna?
     - Rensa cost efter return.
+    - Fixa get-singel metoderna.
 
 Index:
     - Delete-knappar?
