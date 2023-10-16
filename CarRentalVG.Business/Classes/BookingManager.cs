@@ -2,11 +2,9 @@
 using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Extensions;
 using CarRentalVG.Common.Interfaces;
-using CarRentalVG.Data.Classes;
 using CarRentalVG.Data.Interfaces;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace CarRentalVG.Business.Classes;
 
@@ -123,34 +121,50 @@ public class BookingManager
     #region Methods for adding vehicles, bookings and customers.
     public void AddVehicle(string make, string regNo, int odometer, double costKm, RentedStatus status, VehicleTypes type)
     {
-        if (make == string.Empty || regNo == string.Empty || odometer == 0 || costKm == 0 || _costday == 0 || status != RentedStatus.Available)
+        string pattern = @"^[A-Z]{3}\d{3}$|^[A-Z]{3}\d{2}[A-Z]$";
+        
+        if(!Regex.IsMatch(regNo, pattern))
         {
-            error = "Can not add vehicle, try again.";
+            error = "The registrationnumber is incorrect formated, try again.";
         }
         else
         {
-            error = string.Empty;
-            switch (type)
+            if (make == string.Empty || regNo == string.Empty || odometer == 0 || costKm == 0 || _costday == 0 || status != RentedStatus.Available)
             {
-                case VehicleTypes.Motorcycle:
-                    _db.Add<Vehicle>(new Motorcycle() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
-                    break;
-                default:
-                    _db.Add<Vehicle>(new Car() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
-                    break;
+                error = "Can not add vehicle, try again.";
             }
-            SetDefaultValues();
+            else
+            {
+                error = string.Empty;
+                switch (type)
+                {
+                    case VehicleTypes.Motorcycle:
+                        _db.Add<Vehicle>(new Motorcycle() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
+                        break;
+                    default:
+                        _db.Add<Vehicle>(new Car() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
+                        break;
+                }
+                SetDefaultValues();
+            }
         }
     }
     public void AddCustomers(int ssn, string firstName, string lastName)
     {
-        if (ssn != 0 && !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
+        if(GetCustomers().Any(c => c.SSN == ssn))
         {
-            _db.Add(new Customer() { Id = _db.NextPersonId, SSN = ssn, FirstName = firstName, LastName = lastName });
-            error = string.Empty;
-            SetDefaultValues();
+            error = "SSN already in the list, try again.";
         }
-        else error = "Can not add customer, try again.";
+        else
+        {
+            if (ssn != 0 && !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
+            {
+                _db.Add(new Customer() { Id = _db.NextPersonId, SSN = ssn, FirstName = firstName, LastName = lastName });
+                error = string.Empty;
+                SetDefaultValues();
+            }
+            else error = "Can not add customer, try again.";
+        }
     }
     public void AddBooking(Vehicle vehicle, Customer customer)
     {
@@ -193,16 +207,13 @@ Att göra:
 
 Generellt:
     - Try/catch?
-    - Se till att styra input med regex?
-        * SSN
-        * Regno
     - Ge mer specifika felmeddelanden?
     - Kolla över getter/setters.
     - Rensa bort onödiga variablar.
     - Kolla över vilka variablar och properties som kan sättas private/readonly och använda metoder och eller props för att hämta. 
 
 Datalagret:
-    - Fixa så att GetSingle() fungerar? De behövs inte direkt.
+    - Fixa så att GetSingle() fungerar? Den behövs inte direkt.
 
 Common:
 
