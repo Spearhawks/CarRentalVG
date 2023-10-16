@@ -39,7 +39,6 @@ public class BookingManager
     public bool _waitForFinish = false;
     public int _customerId;
 
-    public int kmInput = 0;
 
     private void SetDefaultValues()
     {
@@ -62,9 +61,6 @@ public class BookingManager
     // public IVehicle? GetVehicle(int vehicleId) { return null; }
     // public IVehicle? GetVehicle(string regNo) { return null; }
     // public Vehicle? GetVehicle(int vehicleId)
-    //{ 
-
-    //}
 
 
     #region Behöver jag de här?
@@ -74,7 +70,6 @@ public class BookingManager
 
     #endregion
 
-
     public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
         Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.Id > 0;
@@ -83,8 +78,7 @@ public class BookingManager
     public IEnumerable<Customer> GetCustomers()
     {
         Expression<Func<Customer, bool>> expression = customer => customer is IPerson;
-        var cust = _db.Get(expression);
-        return cust;
+        return _db.Get(expression);
     }
     public IEnumerable<IBooking> GetBookings()
     {
@@ -117,11 +111,13 @@ public class BookingManager
     }
     public IBooking ReturnVehicle(int vehicleID, int distance)
     {
-        var v = GetVehicles().Single(x => x.Id == vehicleID);
+        var v = GetVehicles().Single(x => x.Id == vehicleID && x.RentedStatus == RentedStatus.Rented);
 
         if (v.RentedStatus == RentedStatus.Rented)
         {
-            var b = GetBookings().SingleOrDefault(x => x.Status == BookingStatus.Open && v.Id == vehicleID);
+            // Den här måste jag lösa på annat sätt, den fungerar bara när ett fordon är uthyrt.
+            var b = GetBookings().Single(x => x.Status == BookingStatus.Open && v.Id == vehicleID);
+            Console.WriteLine(b.ToString());
 
             if (b != null)
             {
@@ -135,7 +131,6 @@ public class BookingManager
                 b.Status = BookingStatus.Closed;
                 b.KmReturned = v.Odometer;
 
-                kmInput = 0;
                 return b;
             }
         }
@@ -203,8 +198,6 @@ public class BookingManager
 
 
 /*
- 
-
 Att göra:
 
 Generellt:
@@ -213,7 +206,7 @@ Generellt:
     - Ge mer specifika felmeddelanden?
 
 Datalagret:
-    - Fixa så att GetSingle() fungerar.
+    - Fixa så att GetSingle() fungerar?
 
 Common:
 
@@ -221,11 +214,9 @@ Business:
     - Måste det vara unika SSN??
     - Fixa dropdown arrayerna?
     - Rensa cost efter return.
-    - Fixa get-singel metoderna.
 
 Index:
     - Delete-knappar?
     - Ordna dropdown default och rensning.
     - Fixa så att kmreturned inte sätts på alla uthyrda fordon.
-        * Flytta inputen?
  */

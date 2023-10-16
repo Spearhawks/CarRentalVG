@@ -54,11 +54,6 @@ public class Data : IData
         var t = typeof(List<>).MakeGenericType(typeof(T));
         FieldInfo fieldInfo = GetType().GetField($"_{typeof(T).Name.ToLower()}s", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        Console.WriteLine(t);
-        Console.WriteLine(fieldInfo.Name);
-        Console.WriteLine(expression);
-        Console.WriteLine(fieldInfo.FieldType);
-
         if (fieldInfo != null)
         {
             if (fieldInfo.FieldType == t)

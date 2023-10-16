@@ -11,4 +11,5 @@ public class Vehicle
     public int CostPerDay { get; set; }
     public VehicleTypes VehicleType { get; set; }
     public RentedStatus RentedStatus { get; set; } = RentedStatus.Available;
+    public int KmReturned { get; set; }
 }
