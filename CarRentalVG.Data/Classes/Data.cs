@@ -2,6 +2,7 @@
 using CarRentalVG.Common.Enums;
 using CarRentalVG.Common.Interfaces;
 using CarRentalVG.Data.Interfaces;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -11,10 +12,9 @@ public class Data : IData
 {
     #region Lists and constructor
 
-    //   private List<IPerson> _customers = new();
-    private List<Customer> _customers = new();
-    private List<Booking> _bookings = new();
-    private  List<Vehicle> _vehicles = new();
+    private readonly List<Customer> _customers = new();
+    private readonly List<Booking> _bookings = new();
+    private readonly List<Vehicle> _vehicles = new();
 
     public Data() => SeedData();
 
@@ -42,9 +42,14 @@ public class Data : IData
 
     #region Generic methods for getting and adding data to the lists.
 
-    // Denna metod är inte helt generisk. Fixa till.
     public void Add<T>(T item)
     {
+        var t = item.GetType();
+        Console.WriteLine(t);
+
+        
+        
+        // Inte generiskt nog
         if(item is Vehicle) { _vehicles.Add(item as Vehicle); }
         else if( item is IPerson) { _customers.Add((Customer)(IPerson)item); }
         else if( item is Booking) { _bookings.Add((Booking)(IBooking)item); }
@@ -52,13 +57,13 @@ public class Data : IData
     public List<T> Get<T>(Expression<Func<T, bool>>? expression = null)
     {
         var t = typeof(List<>).MakeGenericType(typeof(T));
-        FieldInfo fieldInfo = GetType().GetField($"_{typeof(T).Name.ToLower()}s", BindingFlags.NonPublic | BindingFlags.Instance);
+        FieldInfo? fieldInfo = GetType().GetField($"_{typeof(T).Name.ToLower()}s", BindingFlags.NonPublic | BindingFlags.Instance);
 
         if (fieldInfo != null)
         {
             if (fieldInfo.FieldType == t)
             {
-                List<T> items = (List<T>)fieldInfo.GetValue(this);
+                List<T>? items = (List<T>)fieldInfo.GetValue(this);
                 return items.Where(expression.Compile()).ToList();
             }
             else
@@ -71,7 +76,6 @@ public class Data : IData
             throw new ArgumentException($"No such field found for type {typeof(T).Name}.");
         }
     }
-  
 
     #endregion
 

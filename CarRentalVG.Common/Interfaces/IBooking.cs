@@ -18,6 +18,5 @@ public interface IBooking
     public DateOnly Returned { get; set; }
     public double Cost { get; set; }
     public BookingStatus Status { get; set; }
-
     public string CustomerOut(Customer c);
 }

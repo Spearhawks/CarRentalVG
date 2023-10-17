@@ -37,7 +37,6 @@ public class BookingManager
     public bool _waitForFinish = false;
     public int _customerId;
 
-
     private void SetDefaultValues()
     {
         _ssn = 0;
@@ -53,7 +52,7 @@ public class BookingManager
 
     #endregion
 
-    #region Methods used for fetching data in the datalayer.
+    #region Methods used for fetching data in the data layer.
 
     public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
@@ -110,9 +109,11 @@ public class BookingManager
             b.Returned = endDate;
             b.Status = BookingStatus.Closed;
             b.KmReturned = v.Odometer;
-            
+
+            v.KmReturned = 0;
             return b;
         }
+        
         return null;
     }
 
@@ -121,17 +122,22 @@ public class BookingManager
     #region Methods for adding vehicles, bookings and customers.
     public void AddVehicle(string make, string regNo, int odometer, double costKm, RentedStatus status, VehicleTypes type)
     {
+        regNo = regNo.ToUpper();
         string pattern = @"^[A-Z]{3}\d{3}$|^[A-Z]{3}\d{2}[A-Z]$";
         
         if(!Regex.IsMatch(regNo, pattern))
         {
-            error = "The registrationnumber is incorrect formated, try again.";
+            error = "The registrationnumber is not in  a correct format, try again.";
         }
         else
         {
             if (make == string.Empty || regNo == string.Empty || odometer == 0 || costKm == 0 || _costday == 0 || status != RentedStatus.Available)
             {
                 error = "Can not add vehicle, try again.";
+            }
+            else if(GetVehicles().Any(v => v.RegistrationNo == regNo))
+            {
+                error = "Registrationnumber is already registered.";
             }
             else
             {
@@ -176,7 +182,7 @@ public class BookingManager
         }
         else
         {
-            _db.Add(new Booking
+            _db.Add<IBooking>(new Booking
             {
                 Id = _db.NextBookingId,
                 RegistrationNo = vehicle.RegistrationNo,
@@ -203,24 +209,22 @@ public class BookingManager
 
 
 /*
-Att göra:
 
 Generellt:
     - Try/catch?
     - Ge mer specifika felmeddelanden?
-    - Kolla över getter/setters.
     - Rensa bort onödiga variablar.
-    - Kolla över vilka variablar och properties som kan sättas private/readonly och använda metoder och eller props för att hämta. 
+    - Kolla över vilka variablar och properties som kan sättas private/readonly och använda metoder och eller props för att hämta.
+    - Placering av error, den syns inte om det felar när man addar customer.
 
 Datalagret:
     - Fixa så att GetSingle() fungerar? Den behövs inte direkt.
+    - Kolla över Get-metoderna och se om de går att förenkla.
 
 Common:
 
 Business:
-    - Unika SSN.
-    - Fixa dropdown arrayerna?
-    - Rensa cost efter return? Textfält rensas på focus ändå.
+    
 
 Index:
     - Ordna dropdown default och rensning.
