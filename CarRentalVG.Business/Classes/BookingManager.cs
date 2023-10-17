@@ -56,17 +56,20 @@ public class BookingManager
 
     public IEnumerable<Vehicle> GetVehicles(RentedStatus status = default)
     {
-        Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.Id > 0;
+        // Expression<Func<Vehicle, bool>> expression = vehicle => vehicle.Id > 0;
+        Expression<Func<Vehicle, bool>> expression = vehicle => true;
         return _db.Get(expression);
     }
     public IEnumerable<Customer> GetCustomers()
     {
-        Expression<Func<Customer, bool>> expression = customer => customer is IPerson;
+        // Expression<Func<Customer, bool>> expression = customer => customer is IPerson;
+        Expression<Func<Customer, bool>> expression = customer => true;
         return _db.Get(expression);
     }
     public IEnumerable<IBooking> GetBookings()
     {
-        Expression<Func<Booking, bool>> expression = booking => booking.Id > 0;
+        // Expression<Func<Booking, bool>> expression = booking => booking.Id > 0;
+        Expression<Func<Booking, bool>> expression = booking => true;
         return _db.Get(expression);
     }
 
@@ -127,7 +130,7 @@ public class BookingManager
         
         if(!Regex.IsMatch(regNo, pattern))
         {
-            error = "The registrationnumber is not in  a correct format, try again.";
+            error = "The registration number is not in  a correct format, try again.";
         }
         else
         {
@@ -182,7 +185,7 @@ public class BookingManager
         }
         else
         {
-            _db.Add<IBooking>(new Booking
+            _db.Add(new Booking
             {
                 Id = _db.NextBookingId,
                 RegistrationNo = vehicle.RegistrationNo,
@@ -209,23 +212,9 @@ public class BookingManager
 
 
 /*
-
 Generellt:
-    - Try/catch?
     - Ge mer specifika felmeddelanden?
-    - Rensa bort onödiga variablar.
     - Kolla över vilka variablar och properties som kan sättas private/readonly och använda metoder och eller props för att hämta.
+    - Kolla över get/set/init på props.
     - Placering av error, den syns inte om det felar när man addar customer.
-
-Datalagret:
-    - Fixa så att GetSingle() fungerar? Den behövs inte direkt.
-    - Kolla över Get-metoderna och se om de går att förenkla.
-
-Common:
-
-Business:
-    
-
-Index:
-    - Ordna dropdown default och rensning.
  */

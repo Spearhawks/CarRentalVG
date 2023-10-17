@@ -44,16 +44,18 @@ public class Data : IData
 
     public void Add<T>(T item)
     {
-        var t = typeof(List<>).MakeGenericType(typeof(T));
-        var list = this.GetType().GetFields().Where(field => field.FieldType == t).FirstOrDefault()?.GetValue(this) as IList<T>;
+        FieldInfo[] fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
 
-        if(list != null) { list.Add(item); }
-        else throw new InvalidOperationException($"Type {typeof(T)} is not supported.");
-
-
-        //if (item is Vehicle) { _vehicles.Add(item as Vehicle); }
-        //else if( item is IPerson) { _customers.Add((Customer)(IPerson)item); }
-        //else if( item is Booking) { _bookings.Add((Booking)(IBooking)item); }
+        foreach (FieldInfo field in fields)
+        {
+            if (field.FieldType == typeof(List<T>))
+            {
+                List<T>? list = field.GetValue(this) as List<T>;
+                list.Add(item);
+                return;
+            }
+        }
+        throw new InvalidOperationException($"Type {typeof(T)} is not supported.");
     }
     public List<T> Get<T>(Expression<Func<T, bool>>? expression = null)
     {
