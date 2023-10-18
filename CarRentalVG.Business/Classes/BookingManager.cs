@@ -214,7 +214,5 @@ public class BookingManager
 /*
 Generellt:
     - Ge mer specifika felmeddelanden?
-    - Kolla över vilka variablar och properties som kan sättas private/readonly och använda metoder och eller props för att hämta.
-    - Kolla över get/set/init på props.
     - Placering av error, den syns inte om det felar när man addar customer.
  */

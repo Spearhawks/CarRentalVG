@@ -20,7 +20,7 @@ public class Data : IData
 
     #endregion
 
-    #region Methods for seeding the initial lists and adding Id to the objects in the list.
+    #region Methods for seeding the lists with data and properties for adding Id to the objects added to the lists.
     private void SeedData()
     {
         var todayDate = DateOnly.FromDateTime(DateTime.Today);
@@ -40,7 +40,7 @@ public class Data : IData
 
     #endregion
 
-    #region Generic methods for getting and adding data to the lists.
+    #region Generic methods for getting data from the lists and adding new data to the lists.
 
     public void Add<T>(T item)
     {

@@ -3,8 +3,8 @@
 namespace CarRentalVG.Common.Classes;
 public class Customer : IPerson
 {
-    public int Id { get; set; }
-    public int SSN { get; set; }
+    public int Id { get; init; }
+    public int SSN { get; init; }
     public string FirstName { get; set;}
     public string LastName { get; set; }
 }

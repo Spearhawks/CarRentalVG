@@ -10,7 +10,7 @@ namespace CarRentalVG.Common.Classes;
 public class Booking : IBooking
 {
     public int Id { get; init; }
-    public string RegistrationNo { get; set; }
+    public string RegistrationNo { get; init; }
     public Customer Customer { get; set; }
     public int KmRented { get; set; }
     public int KmReturned { get; set; }
