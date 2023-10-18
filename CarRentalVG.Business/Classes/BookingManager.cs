@@ -48,6 +48,7 @@ public class BookingManager
         _odom = 0;
         _costkm = 0;
         _costday = 0;
+        _customerId = 0;
     }
 
     #endregion
@@ -126,44 +127,40 @@ public class BookingManager
     public void AddVehicle(string make, string regNo, int odometer, double costKm, RentedStatus status, VehicleTypes type)
     {
         regNo = regNo.ToUpper();
-        string pattern = @"^[A-Z]{3}\d{3}$|^[A-Z]{3}\d{2}[A-Z]$";
+        string patternRegNo = @"^[A-Z]{3}\d{3}$|^[A-Z]{3}\d{2}[A-Z]$";
+
+        if (!Regex.IsMatch(regNo, patternRegNo)) { error = "The registration number is not in  a correct format, try again."; }
         
-        if(!Regex.IsMatch(regNo, pattern))
+        else 
         {
-            error = "The registration number is not in  a correct format, try again.";
-        }
-        else
-        {
-            if (make == string.Empty || regNo == string.Empty || odometer == 0 || costKm == 0 || _costday == 0 || status != RentedStatus.Available)
-            {
-                error = "Can not add vehicle, try again.";
-            }
-            else if(GetVehicles().Any(v => v.RegistrationNo == regNo))
-            {
-                error = "Registrationnumber is already registered.";
-            }
+            if (odometer < 0 || costKm < 0 || _costday < 0) { error = "One or more value is less then 0, try again."; return; }
             else
             {
-                error = string.Empty;
-                switch (type)
+                if (make == string.Empty || regNo == string.Empty || odometer == 0  || costKm == 0 || _costday == 0 || status != RentedStatus.Available)
+                { error = "Can not add vehicle, try again."; }
+                else if(GetVehicles().Any(v => v.RegistrationNo == regNo))
+                { error = "Registrationnumber is already registered."; }
+                else
                 {
-                    case VehicleTypes.Motorcycle:
+                    error = string.Empty;
+                    switch (type)
+                    {
+                        case VehicleTypes.Motorcycle:
                         _db.Add<Vehicle>(new Motorcycle() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
                         break;
-                    default:
-                        _db.Add<Vehicle>(new Car() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
-                        break;
+                        default:
+                            _db.Add<Vehicle>(new Car() { Id = _db.NextVehicleId, RegistrationNo = regNo, Make = make, Odometer = odometer, CostPerKm = costKm, CostPerDay = _costday, RentedStatus = status, VehicleType = type });
+                            break;
+                    }
+                    SetDefaultValues();
                 }
-                SetDefaultValues();
             }
         }
     }
     public void AddCustomers(int ssn, string firstName, string lastName)
     {
-        if(GetCustomers().Any(c => c.SSN == ssn))
-        {
-            error = "SSN already in the list, try again.";
-        }
+        if(GetCustomers().Any(c => c.SSN == ssn)) { error = "SSN already in the list, try again."; }
+        else if(ssn < 0) { error = "SSN is not in a correct format, try again."; }
         else
         {
             if (ssn != 0 && !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
@@ -194,6 +191,8 @@ public class BookingManager
                 Rented = startDate,
                 Status = BookingStatus.Open
             });
+            error = string.Empty;
+            SetDefaultValues();
         }
     }
     #endregion
@@ -208,11 +207,3 @@ public class BookingManager
     // public Vehicle? GetVehicle(int vehicleId)
     #endregion
 }
-
-
-
-/*
-Generellt:
-    - Ge mer specifika felmeddelanden?
-    - Placering av error, den syns inte om det felar när man addar customer.
- */
